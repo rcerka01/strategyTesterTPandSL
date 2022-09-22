@@ -112,8 +112,8 @@ module.exports = { run: function (data) {
         profits_to_console.push({year: i, profits: yearly, sum: arrSum(yearly.filter(q => q != undefined))})
     }
 
-    console.log(profits_to_console)
-    console.log(arrSum(profits))
+    // console.log(profits_to_console)
+    // console.log(arrSum(profits))
 
 
     PREV_DIRECTIONS = []
