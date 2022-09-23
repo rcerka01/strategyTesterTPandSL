@@ -1,5 +1,6 @@
 var statsFileController = require("./statsFileController");
 var seperateSlController = require("./seperateSlController")
+var combinedController = require("./combinedController")
 
 const fs = require('fs')
 const conf = require("../config/config");
@@ -66,7 +67,18 @@ module.exports = { run: function (app) {
     });
   })
 
-  app.get("/ss", function(req, res) {
+  app.get("/combined", function(req, res) {
+    fs.readFile('data.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      var output = combinedController.run(data)
+      res.render("index", { output });
+    });
+  })
+
+  app.get("/seperate", function(req, res) {
     fs.readFile('data.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
