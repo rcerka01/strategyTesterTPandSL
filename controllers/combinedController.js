@@ -1,6 +1,5 @@
 const conf = require("../config/config");
 const com = require("./commonsController");
-const { profitsByYearArr } = require("./commonsController");
 
 function joinProfits(data) {
     var depth = conf.currencies.length

@@ -1,4 +1,5 @@
 const conf = require("../config/config");
+const fs = require('fs')
 
 function arrSum(val) {
     if (val.length > 0) {
@@ -21,6 +22,63 @@ function loadCurrenciesBoolArray(bool) {
     }
     return results
 }
+
+function convertTimestamp(unixTimestamp) {
+    var date = new Date(unixTimestamp * 1000);
+    return "[" + date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString("en-US") + "]"
+  }
+  
+function filterByYear(arr, year) {
+    return arr.filter(val => { if (dateTimeToYear(val.time) == year) return val })
+}
+
+function saveJson(json) {
+    fs.writeFile("data.json", JSON.stringify(json), function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+}
+
+
+
+// *** For fileController *** //
+
+function transfearDaysArr(daysArr) {
+    var transfearResult = []
+
+    daysArr[0].forEach( firstFileItem => {
+        if (firstFileItem !== void 0) {
+            var profits = []
+            var closes = []
+            var directions = []
+
+            profits.push(firstFileItem.profit)
+            closes.push(firstFileItem.close)
+            directions.push(firstFileItem.direction)
+            
+            for (var i=1; i<conf.currencies.length; i++) {
+                var val = daysArr[i].find(date => date.time === firstFileItem.time)
+                if (val !== void 0) {
+                profits.push(val.profit)
+                closes.push(val.close)
+                directions.push(val.direction)
+                }
+            }
+
+            transfearResult.push({
+                date: firstFileItem.time,
+                closes: closes,
+                profits: profits,
+                directions: directions
+            })
+        }
+    })
+    return transfearResult
+}
+
+
+
 
 // *** From Data.json *** //
 
@@ -79,6 +137,12 @@ module.exports = {
     dateTimeToYear,
     dateTimeToMonth,
     loadCurrenciesBoolArray,
+    convertTimestamp,
+    filterByYear,
+    saveJson,
+
+    transfearDaysArr,
+
     getProfits,
     profitsByYearArr
 }
