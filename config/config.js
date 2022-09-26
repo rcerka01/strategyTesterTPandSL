@@ -2,9 +2,6 @@ module.exports = {
     app: {
         port: 3000
     },
-    pairs: {
-        min: 5
-    },
     year: {
         from: 2010,
         to: 2022

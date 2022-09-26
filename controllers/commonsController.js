@@ -3,7 +3,7 @@ const conf = require("../config/config");
 function arrSum(val) {
     if (val.length > 0) {
         return val.reduce((a, b) => Number(a) + Number(b))
-    }
+    } else return 0
 }
 
 function dateTimeToYear(time) {
@@ -14,30 +14,38 @@ function dateTimeToMonth(time) {
     return time.split("/")[0].substring(1)
 }
 
+function loadCurrenciesBoolArray(bool) {
+    var results = []
+    for (i=0; i<conf.currencies.length; i++) {
+        results.push(bool)
+    }
+    return results
+}
+
 // *** From Data.json *** //
 
 function getProfits(arr, ci, tp, sl) {
     var profitsArr = [] 
-    var CLOSE = true
+    var CLOSE = false
     var PREV_CLOSE = true
     var PREV_PROFIT = 0
     var PREV_DIR = ""
     function takeProfit(profit, dir) {
-        // disable to remove SL
-        if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
-        else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
-        //
-        if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
-        else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
-        else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
-        else if (CLOSE && PREV_DIR != dir) {
-            if (profit >= tp) return profit
-            else { CLOSE = false; return 0 }
-        }
-        else return 0
-        // only this to remove TP and SL, and: var CLOSE = false
-        // if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
+        // // disable to remove SL
+        // if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
+        // else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
+        // //
+        // if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
+        // else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
+        // else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
+        // else if (CLOSE && PREV_DIR != dir) {
+        //     if (profit >= tp) return profit
+        //     else { CLOSE = false; return 0 }
+        // }
         // else return 0
+        // only this to remove TP and SL, and: var CLOSE = false
+        if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
+        else return 0
     }
     arr.forEach( (element, i) => {
         var profit = takeProfit(element.profits[ci], element.directions[ci])
@@ -70,6 +78,7 @@ module.exports = {
     arrSum,
     dateTimeToYear,
     dateTimeToMonth,
+    loadCurrenciesBoolArray,
     getProfits,
     profitsByYearArr
 }
