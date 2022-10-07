@@ -2,74 +2,36 @@ const conf = require("../config/config");
 const com = require("./commonsController");
 const fs = require('fs')
 
-var TAKE_NEXT = false 
-var SUM = []
-var SUM_ARR = []
-var DAYS_ARR = []
-var PREVIOUS = 0
-var CURRENT = 0
-var ACC = 0
-var DIRECTION = ""
-var LOG = ""
+// *** FROM TRAIDING VIEW FiLES *** //
 
-let CURRENCIES = conf.currencies
+/* CONTROLLER */
 
+function formLines(dataArray) {
+    var takeNext = false
+    var directionToGreen = false
+    var directionToRed = false
 
-const readFile = async path => {
-    try {
-        const data = await fs.promises.readFile(path, 'utf8')
-        var dataArray = data.split(/\r?\n/);
-        dataArray.shift();
-        formLine(dataArray)
-    }
-    catch(err) {
-        console.log(err)
-    }
-}
+    var direction = ""
 
+    var startValue = 0
+    var acc = 0
 
-function calculateSum(firstVal, ts) {
-    if (com.dateTimeToYear(com.convertTimestamp(ts)) >= conf.year.from && com.dateTimeToYear(com.convertTimestamp(ts)) <= conf.year.to) {
-        if (PREVIOUS == 0) {
-        PREVIOUS = firstVal
-        } else {
-        CURRENT = firstVal
-        if (DIRECTION == "red") {
-            var profit = PREVIOUS - CURRENT
-            ACC = ACC + Number(profit)
-            SUM.push({ profit: Number(profit * 10000).toFixed(2), time: com.convertTimestamp(ts), acc: Number(ACC * 10000).toFixed(2), direction: DIRECTION })
-            PREVIOUS = CURRENT
-        }
-        else if (DIRECTION == "green") {
-            var profit = CURRENT - PREVIOUS
-            ACC = ACC + Number(profit)
-            SUM.push({ profit: Number(profit * 10000).toFixed(2), time: com.convertTimestamp(ts), acc: Number(ACC * 10000).toFixed(2), direction: DIRECTION })
-            PREVIOUS = CURRENT
-        }
-        }
-    }
-}
+    var sums = []
+    var days = []
 
-function formLine(dataArray) {
-    SUM = []
-    TAKE_NEXT = false 
-    PREVIOUS = 0
-    CURRENT = 0
-    ACC = 0
-    DIRECTION = ""
-    DIRECTION_SWITCH_TO_RED = false
-    DIRECTION_SWITCH_TO_GREEN = false
-
-    DAYS = []
-    START_VALUE = 0
-
-    //
-    function addDay(time, close) {
-        var profit = 0
-        if (com.dateTimeToYear(time) >= conf.year.from && com.dateTimeToYear(time) <= conf.year.to) {
-        if (DIRECTION == "green" && START_VALUE != 0) profit = Number(close) - START_VALUE
-        if (DIRECTION == "red" && START_VALUE !=0) profit = START_VALUE - Number(close)
-        DAYS.push({ time:time, close: close, direction: DIRECTION, profit: (profit*10000).toFixed(2) })
+    function addItem(ts, prevProf, currentProf, isIncrAcc) {
+        if (com.dateTimeToYear(ts) >= conf.year.from && com.dateTimeToYear(ts) <= conf.year.to) {
+            if (direction == "red") {
+                var profit = prevProf - currentProf
+                    var test = com.roundToFixed(prevProf) + " - " + com.roundToFixed(currentProf)
+                if (isIncrAcc) acc = acc + profit
+            }
+            else if (direction == "green") {
+                var profit = currentProf - prevProf
+                var test = com.roundToFixed(currentProf) + " - " + com.roundToFixed(prevProf)
+                if (isIncrAcc) acc = acc + profit
+            }
+            return { profit: profit, time: ts, acc: acc, close:currentProf, direction: direction, test: test }
         }
     }
 
@@ -79,124 +41,188 @@ function formLine(dataArray) {
         var sh1 = lineArr[7]
         var sh2 = lineArr[8]
 
-        if (com.dateTimeToYear(com.convertTimestamp(ts)) >= conf.year.from && com.dateTimeToYear(com.convertTimestamp(ts)) <= conf.year.to) {
+        var convertedTs = com.convertTimestamp(ts)
 
-        //
-        var convertedTime = com.convertTimestamp(ts)
-        addDay(convertedTime, lineArr[4])
+        if (com.dateTimeToYear(convertedTs) >= conf.year.from && com.dateTimeToYear(convertedTs) <= conf.year.to) {
 
-        if (TAKE_NEXT) {
-            calculateSum(Number(lineArr[4]), ts)
-            TAKE_NEXT = false
-            //
-            if (DIRECTION_SWITCH_TO_RED) { DIRECTION = "red"; DIRECTION_SWITCH_TO_RED = false }
-            if (DIRECTION_SWITCH_TO_GREEN) { DIRECTION = "green"; DIRECTION_SWITCH_TO_GREEN = false }
-            PROFIT = 0
-            START_VALUE = Number(lineArr[4])
-        }
+            days.push(addItem(convertedTs, startValue, lineArr[4], false))
 
-        if (sh1 != "NaN") {
-            TAKE_NEXT = true
-            DIRECTION_SWITCH_TO_RED = true
-        }
+            if (takeNext) {
 
-        if (sh2 != "NaN") {
-            TAKE_NEXT = true
-            DIRECTION_SWITCH_TO_GREEN = true
-        }
+                sums.push(addItem(convertedTs, startValue, lineArr[4], true))
+                takeNext = false
 
-        LOG = ""
+                if (directionToRed) { direction = "red"; directionToRed = false }
+                if (directionToGreen) { direction = "green"; directionToGreen = false }
+               
+                startValue = lineArr[4]
+            }
+
+            if (sh1 != "NaN") {
+                takeNext = true
+                directionToRed = true
+            }
+
+            if (sh2 != "NaN") {
+                takeNext = true
+                directionToGreen = true
+            }
         }
     })
-    SUM_ARR.push(SUM)
-    DAYS_ARR.push(DAYS) 
+    return { sums: sums, days: days }
 }
 
-// function formatDay(days) {
-//     var output = "<br><br><br><table>"
-//     var counter = 1
-//     days.forEach( day => {
-//         output = output + "<tr><td>" 
-//         + counter + "</td><td>" 
-//         + day.time + "</td><td>"
-//         + Number(day.close).toFixed(6) + "</td><td>" 
-//         + day.direction + "</td><td>" 
-//         + day.profit + "</td>"
-//         counter = counter + 1
-//     })
-//     return output
-// }
-
-
-
-
-
-async function readFiles() {
-    for (var i=1; i<=conf.currencies.length; i++) {
-        var path = "uploads/" + i + ".csv"
-        await readFile(path)
+const readFile = async path => {
+    try {
+        const data = await fs.promises.readFile(path, 'utf8')
+        var dataArray = data.split(/\r?\n/);
+        dataArray.shift();
+        return  formLines(dataArray)
     }
-    //var output = formatMultipleFileTable(SUM_ARR)
-    // var output = formatDay(DAYS)
-    var output = "ok"
-    com.saveJson(com.transfearDaysArr(DAYS_ARR))
-    return output
-    //res.render("index", { output });
+    catch(err) {
+        console.log(err)
+    }
 }
 
-// function formatMultipleFileTable(multArr) {
-//     var output = output + "<table>"
-//     for (var i=conf.year.from; i<conf.year.to+1; i++) {
-//         output = output + "<tr><td colspan='2'><strong>" + i + "</strong></td></tr>";
-//         output = output + formatMultipleFileRow(multArr, i.toString())
-//     }
-//     return output + "</table>"
-// }
+function transfearDaysArr(daysArr) {
+    var transfearResult = []
 
-// function formatMultipleFileRow(multArr, year) {
-//     var output = "<tr>"
-//     var counter = 0
-//     multArr.forEach( arr => {
-//         output = output + "<td style='vertical-align:top'><strong>" + CURRENCIES[counter] + "</strong></td><td style='vertical-align:top'>" + formatOutput(com.filterByYear(arr, year)) + "</td>"
-//         counter = counter + 1 
-//     })
-//     output = output + "</tr>"
-//     return output
-// }
+    daysArr[0].forEach( firstFileItem => {
+        if (firstFileItem !== void 0) {
+            var profits = []
+            var closes = []
+            var directions = []
 
-// function formatOutput(arr) {
-//     var output = 
-//     "<table>" +
-//       "<tr>" +
-//         "<th></th><th>Date</th><th>Direction</th><th>Profit</th><th>Yearly acc</th><th>Total acc</th>" +
-//       "</tr>"
+            profits.push(firstFileItem.profit)
+            closes.push(firstFileItem.close)
+            directions.push(firstFileItem.direction)
+            
+            for (var i=1; i<daysArr.length; i++) {
+                var val = daysArr[i].find(date => date.time === firstFileItem.time)
+                if (val !== void 0) {
+                profits.push(val.profit)
+                closes.push(val.close)
+                directions.push(val.direction)
+                }
+            }
+
+            transfearResult.push({
+                date: firstFileItem.time,
+                closes: closes,
+                profits: profits,
+                directions: directions
+            })
+        }
+    })
+    return transfearResult
+}
+
+/* OUTPUTT */
+
+/* buy year */
+function formatMultipleFileTable(multArr, currencies) {
+    var output = "<table>"
+    for (var i=conf.year.from; i<conf.year.to+1; i++) {
+        output = output + "<tr>" + formatMultipleFileRow(multArr, i.toString(), currencies) + "</tr>"
+    }
+    return output + "</table>"
+}
+
+function formatMultipleFileRow(multArr, year, currencies) {
+    var output = ""
+    multArr.forEach( (arr, index) => {
+        output = output + 
+                    "<td style='text-align:center;padding:10px;vertical-align:top'>" + 
+                        "<strong>" + currencies.map(val => val.name)[index] + " " + year + "</strong>" +
+                        "</br></br>" +
+                        formatYearlyOutput(com.filterByYear(arr, year)) + 
+                    "</td>"
+    })
+    return output
+}
+
+function formatYearlyOutput(arr) {
+    var output = 
+    "<table>" +
+      "<tr>" +
+        "<th></th><th>Date</th><th>Direction</th><th>Profit</th><th>Yearly acc</th><th>Total acc</th>" +
+      "</tr>"
       
-//     var COUNTER = 1
-//     var YEARLY_PROFIT = 0
+    var COUNTER = 1
+    var yearlyProfit = 0
   
-//     arr.forEach( data => {
+    arr.forEach( data => {
   
-//       if (Number(data.profit) < 0 ) var color = "coral"
-//       else var color = ""
+      if (Number(data.profit) < 0) var color = "coral"
+      else var color = ""
   
-//       YEARLY_PROFIT = YEARLY_PROFIT + Number(data.profit)
-  
-//       output = output + 
-//         "<tr>" +
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + COUNTER  + "</td>" + 
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.time + "</td>" + 
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.direction + "</td>" +
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + Number(data.profit).toFixed(2) + "</td>" +
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + YEARLY_PROFIT.toFixed(2) + "</td>" +
-//           "<td style='background-color:" + color + ";white-space:nowrap;'>" + Number(data.acc).toFixed(2) +  "</td>" +
-//         "</tr>"
-  
-//         COUNTER = COUNTER + 1
-//     })
-  
-//     output = output + "</table>"
-  
-//     return output
-//   }
+      if (!isNaN(Number(data.profit))) yearlyProfit = yearlyProfit + Number(data.profit)
 
-module.exports = { readFiles }
+      output = output + 
+        "<tr>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + COUNTER  + "</td>" + 
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.time + "</td>" + 
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.direction + "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(data.profit) + "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(yearlyProfit) + "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(data.acc) +  "</td>" +
+        "</tr>"
+  
+        COUNTER = COUNTER + 1
+    })
+  
+    output = output + "</table>"
+  
+    return output
+  }
+
+/* every day */ 
+function formatDay(days, currency) {
+    var output = "<table><tr><th colspan=7>" + currency + "</th></tr>" +
+                    "<th>Nr</th><th>Date</th><th>Close</th><th>Direction</th><th>Profit</th><th>Test</th><th>Cash</th>"
+    var counter = 1
+    days.forEach( day => {
+        output = output + "<tr>" +
+        "<td><strong>" + counter + "</strong></td>" + 
+        "<td>" + day.time + "</td>" +
+        "<td><strong>" + com.roundToFixed(day.close) + "</strong></td>" +
+        "<td>" + day.direction + "</td>" +
+        "<td><strong>" + com.roundToFixed(day.profit) + "</strong></td>" +
+        "<td>" + day.test + "</td>" +
+        "<td><strong>" + com.pipsToFixed(day.profit) + "</strong></td>" +
+        "</tr>"
+        counter = counter + 1
+    })
+    return output
+}
+
+module.exports = { readFiles: async function () {
+        var data = []
+        var currencies = []
+        var cur = conf.mapper
+        for (var i=0; i<cur.length; i++) {
+            if (cur[i].enabled) {
+                var path = "uploads/" + cur[i].id + ".csv"
+                currencies.push(cur[i])
+                data.push(await readFile(path))
+            }
+        }
+
+        switch (conf.read.switch) {
+            case 1:
+                var name = com.getCurrencyById(conf.read.everyDayCurrency).name
+                var filteredIndex = currencies.findIndex(val => val.id == conf.read.everyDayCurrency)
+                var output = formatDay(data.map(val => val.days)[filteredIndex], name)
+            break
+            case 2:
+                var output = formatMultipleFileTable(data.map(val => val.sums), currencies)
+            break
+            case 3: 
+                com.saveJson(transfearDaysArr(data.map(val => val.days)))
+                var output = "OK"
+            break
+        }
+    
+        return output
+    }
+ }

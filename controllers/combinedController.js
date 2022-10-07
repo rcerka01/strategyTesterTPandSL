@@ -1,8 +1,13 @@
-const conf = require("../config/config");
 const com = require("./commonsController");
+const conf = require("../config/config");
+
+// *** FROM data.json *** //
+
+/* CONTROLLER */
 
 function joinProfits(data) {
-    var depth = conf.currencies.length
+    var depth = com.getEnabledCurrencies().length
+
     var jsonData = JSON.parse(data)
     var arr = []
     var result = []
@@ -50,7 +55,7 @@ function isOpensGreaterTp(closes, dailies, tp) {
     dailies.forEach( (val, i) => {
         if (!closes[i]) results.push(val)
     })
-    if (com.arrSum(results) > tp) return true
+    if (com.pipsToFixed(com.arrSum(results)) > tp) return true
     return false
 }
 
@@ -102,10 +107,12 @@ function takeProfit(arr, tp) {
     return results
 } 
 
+/* OUTPUTT */
+
 function formTableArrHead(length) {
     var output = ""
     for (var i=0; i<length; i++) {
-        output = output + "<th>" + conf.currencies[i] + "</th>"
+        output = output + "<th>" + com.getCurrencyById(i+1).name + "</th>"
     }
     return output
 }
@@ -122,7 +129,7 @@ function formTableArrCells(arr, colors) {
 } 
 
 function outputResult(arr) {
-    var length = conf.currencies.length
+    var length = com.getEnabledCurrencies().length
     var output = "<table>"
     output = output 
                 + "<tr>"
@@ -146,11 +153,11 @@ function outputResult(arr) {
         output = output 
                     + "<tr>"
                     + "<td>" + val.date + "</td>"
-                    + formTableArrCells(val.dailies, val.directions)
-                    + "<td>" + Number(val.sum).toFixed(2) + "</td>"
-                    + formTableArrCells(val.profits, val.directions)
+                    + formTableArrCells(val.dailies.map(com.pipsToFixed), val.directions)
+                    + "<td>" + com.pipsToFixed(val.sum) + "</td>"
+                    + formTableArrCells(val.profits.map(com.pipsToFixed), val.directions)
                     + formTableArrCells(val.closes, val.directions)
-                    + "<td>" + Number(val.profit).toFixed(2) + "</td>"
+                    + "<td>" + com.pipsToFixed(val.profit) + "</td>"
                     + "</tr>"
     })
 
@@ -159,14 +166,12 @@ function outputResult(arr) {
 }
 
 module.exports = { run: function (data) {
-
     var joined = joinProfits(data)
-    var result = takeProfit(joined, 300)
+    var result = takeProfit(joined, conf.combined.tp)
     var profitsByYear = com.profitsByYearArr(result)
 
-    console.log(profitsByYear)
-
-    var output = outputResult(result)
+    var output = com.outputProfitsByYear(profitsByYear)
+    output = output + "<br>" + outputResult(result)
 
     return output
 }}

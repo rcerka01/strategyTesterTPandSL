@@ -15,9 +15,18 @@ function dateTimeToMonth(time) {
     return time.split("/")[0].substring(1)
 }
 
+function pipsToFixed(val) {
+    return Number(val * 10000).toFixed(2)
+}
+
+function roundToFixed(val) {
+    return Number(val).toFixed(5)
+}
+
 function loadCurrenciesBoolArray(bool) {
     var results = []
-    for (i=0; i<conf.currencies.length; i++) {
+    var length = getEnabledCurrencies().length
+    for (i=0; i<length; i++) {
         results.push(bool)
     }
     return results
@@ -25,7 +34,8 @@ function loadCurrenciesBoolArray(bool) {
 
 function convertTimestamp(unixTimestamp) {
     var date = new Date(unixTimestamp * 1000);
-    return "[" + date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString("en-US") + "]"
+    date.setDate(date.getDate()+1) // move one day back
+    return "[" + date.toLocaleDateString("en-UK") + " " + date.toLocaleTimeString("en-UK") + "]"
   }
   
 function filterByYear(arr, year) {
@@ -40,48 +50,17 @@ function saveJson(json) {
     });
 }
 
-
-
-// *** For fileController *** //
-
-function transfearDaysArr(daysArr) {
-    var transfearResult = []
-
-    daysArr[0].forEach( firstFileItem => {
-        if (firstFileItem !== void 0) {
-            var profits = []
-            var closes = []
-            var directions = []
-
-            profits.push(firstFileItem.profit)
-            closes.push(firstFileItem.close)
-            directions.push(firstFileItem.direction)
-            
-            for (var i=1; i<conf.currencies.length; i++) {
-                var val = daysArr[i].find(date => date.time === firstFileItem.time)
-                if (val !== void 0) {
-                profits.push(val.profit)
-                closes.push(val.close)
-                directions.push(val.direction)
-                }
-            }
-
-            transfearResult.push({
-                date: firstFileItem.time,
-                closes: closes,
-                profits: profits,
-                directions: directions
-            })
-        }
-    })
-    return transfearResult
+function getCurrencyById(id) {
+    return conf.mapper.find(val => val.id == id)
 }
 
+function getEnabledCurrencies() {
+    return conf.mapper.filter(val => val.enabled == true)
+}
 
+// *** USE IN MULTIPLE CONTROLLERS *** //
 
-
-// *** From Data.json *** //
-
+// single and combined
 function getProfits(arr, ci, tp, sl) {
     var profitsArr = [] 
     var CLOSE = false
@@ -89,21 +68,30 @@ function getProfits(arr, ci, tp, sl) {
     var PREV_PROFIT = 0
     var PREV_DIR = ""
     function takeProfit(profit, dir) {
-        // // disable to remove SL
-        // if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
-        // else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
-        // //
-        // if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
-        // else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
-        // else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
-        // else if (CLOSE && PREV_DIR != dir) {
-        //     if (profit >= tp) return profit
-        //     else { CLOSE = false; return 0 }
-        // }
-        // else return 0
-        // only this to remove TP and SL, and: var CLOSE = false
-        if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
-        else return 0
+
+        // for single output with TP and SL
+        if (tp != 0 || sl != 0) {
+            // disable to remove SL
+            if (sl != 0) {
+                if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
+                else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
+            }
+            
+            if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
+            else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
+            else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
+            else if (CLOSE && PREV_DIR != dir) {
+                if (profit >= tp) return profit
+                else { CLOSE = false; return 0 }
+            }
+            else return 0
+        }
+
+        // only this to remove TP and SL (use in combined), and: var CLOSE = false
+        if (tp == 0 && sl ==0) {
+            if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
+            else return 0
+        }
     }
     arr.forEach( (element, i) => {
         var profit = takeProfit(element.profits[ci], element.directions[ci])
@@ -116,6 +104,7 @@ function getProfits(arr, ci, tp, sl) {
     return profitsArr
 }
 
+// single and combined
 function profitsByYearArr(arr) {
     var result = []
 
@@ -132,17 +121,57 @@ function profitsByYearArr(arr) {
     return result
 }
 
+// single and combined
+function outputProfitsByYear(arr, tp, sl) {
+    if (tp != undefined) var outputTp = "TP: " + tp; else var outputTp = ""
+    if (sl != undefined) var outputSl = "SL: " + sl; else var outputSl = ""
+    var output = "<table style='border: 1px solid black;'>" +
+                    "<tr>"
+    arr.forEach( val => {
+        output = output + "<th>" + val.year + "<br>" + outputTp + " " + outputSl + "</th>"
+    })
+    output = output + "</tr><tr>"
+    arr.forEach( val => {
+        output = output + "<td>" + 
+        "January: " + pipsToFixed(val.profits[0]) + "<br>" +
+        "February: " + pipsToFixed(val.profits[1]) + "<br>" +
+        "March: " + pipsToFixed(val.profits[2]) + "<br>" + 
+        "April: " + pipsToFixed(val.profits[3]) + "<br>" + 
+        "May: " + pipsToFixed(val.profits[4]) + "<br>" + 
+        "June: " + pipsToFixed(val.profits[5]) + "<br>" + 
+        "July: " + pipsToFixed(val.profits[6]) + "<br>" + 
+        "August: " + pipsToFixed(val.profits[7]) + "<br>" + 
+        "September: " + pipsToFixed(val.profits[8]) + "<br>" +
+        "October: " + pipsToFixed(val.profits[9]) + "<br>" +
+        "November: " + pipsToFixed(val.profits[10]) + "<br>" +
+        "December: " + pipsToFixed(val.profits[11]) + "<br>" +
+      "</td>"
+    })
+    output = output + "</tr><tr>"
+    arr.forEach( val => {
+        output = output + "<th>" + pipsToFixed(val.sum) + "</th>"
+    })
+    output = output + "</tr>"
+
+    return output
+}
+
 module.exports = {
+    // small
     arrSum,
     dateTimeToYear,
     dateTimeToMonth,
+    pipsToFixed,
+    roundToFixed,
     loadCurrenciesBoolArray,
     convertTimestamp,
     filterByYear,
     saveJson,
+    getCurrencyById,
+    getEnabledCurrencies,
 
-    transfearDaysArr,
-
+    // common
     getProfits,
-    profitsByYearArr
+    profitsByYearArr,
+    outputProfitsByYear
 }

@@ -1,22 +1,10 @@
-var statsFileController = require("./statsFileController");
-var seperateSlController = require("./seperateSlController")
+var singleController = require("./singleController")
 var combinedController = require("./combinedController")
 var fileController = require("./fileController")
 
 const fs = require('fs')
 
 module.exports = { run: function (app) {
-  app.get("/s", function(req, res) {
-    fs.readFile('data.json', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      var output = statsFileController.run(data)
-      res.render("index", { output });
-    });
-  })
-
   app.get("/combined", function(req, res) {
     fs.readFile('data.json', 'utf8', (err, data) => {
       if (err) {
@@ -28,13 +16,13 @@ module.exports = { run: function (app) {
     });
   })
 
-  app.get("/seperate", function(req, res) {
+  app.get("/single", function(req, res) {
     fs.readFile('data.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
         return;
       }
-      var output = seperateSlController.run(data)
+      var output = singleController.run(data)
       res.render("index", { output });
     });
   })
