@@ -49,14 +49,14 @@ module.exports = {
     // 2 - by year
     // 3 - read intermediate file
     read: {
-        switch: 3,
+        switch: 2,
         everyDayCurrency: 1
     },
     // From data.json
     // 1 - multiple TP and SL combinations
     // 2 - single TP and SL and every day output
     single: {
-        switch: 1,
+        switch: 2,
 
         currencyId: 1,
 
@@ -75,8 +75,20 @@ module.exports = {
         },
     },
 
+    // From data.json
+    // 1 - single tp
+    // 2 - multiple tp
     combined: {
-        tp: 60
+        switch: 1,
+
+        tp: 60,
+
+        multipleTP: {
+            start: 0,
+            stop: 1000,
+            step: 50
+        }
+
     }
 
 }

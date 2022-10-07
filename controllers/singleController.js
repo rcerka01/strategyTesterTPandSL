@@ -5,49 +5,7 @@ var CI = com.getEnabledCurrencies().findIndex(val => val.id == conf.single.curre
 
 // *** FROM data.json *** //
 
-/* CONTROLLER */
-
-function countAvaregesAndPositives(arr, tp, sl) {
-    var positives = 0
-    var total = 0
-    var avarages = []
-    var sums = []
-    arr.forEach( val => {
-        sums.push(com.pipsToFixed(val.sum))
-
-        var av = com.arrSum(val.profits) / val.profits.length
-        avarages.push(com.pipsToFixed(av))
-
-        val.profits.forEach( prof => {
-            total = total + 1
-            if (prof > 0) positives = positives + 1
-        })
-    })
-    return { tp, sl, avarages, positives, total, sums }
-}
-
-function sortAvaragesAndPositives(arr) {
-    return  arr.sort((a,b) => Number(b.positives) - Number(a.positives))
-}
-
 /* OUTPUTT */
-
-// 1
-function outputAvaragesAndPositives(arr) {
-    var output = "<table>"
-    arr.forEach( val => {
-        output = output + "<tr>" + 
-        "<td>TP: " + val.tp + "</td>" +
-        "<td>SL: " + val.sl + "</td>" +
-        "<td>" + val.positives + "/" + val.total + "</td>" +
-        "<td>TP: " + val.avarages+ "</td>" +
-        "<td><strong>" + val.sums + "</strong></td>" +
-        "<td style='color:red;'>" + com.arrSum(val.sums).toFixed(2) + "</td>" +
-        "</tr>" 
-    })
-    output = output + "</table>"
-    return output
-}
 
 // 2
 function outputProfits(arr) {
@@ -68,7 +26,6 @@ function outputProfits(arr) {
     output = output + "</table>"
     return output
 }
-
 
 module.exports = { run: function (data) {
     var jsonData = JSON.parse(data)
@@ -91,13 +48,13 @@ module.exports = { run: function (data) {
                     var profits = com.getProfits(jsonData, CI, i/10000, ii/10000)
                     var profitsByYear = com.profitsByYearArr(profits)
 
-                    avAndPos.push(countAvaregesAndPositives(profitsByYear, i, ii))
+                    avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i, ii))
 
                     outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i, ii) 
                 }
             }
 
-            output = output + outputAvaragesAndPositives(sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
+            output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
         break
 
         case 2:

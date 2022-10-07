@@ -122,6 +122,31 @@ function profitsByYearArr(arr) {
 }
 
 // single and combined
+function countAvaregesAndPositives(arr, tp, sl) {
+    var positives = 0
+    var total = 0
+    var avarages = []
+    var sums = []
+    arr.forEach( val => {
+        sums.push(pipsToFixed(val.sum))
+
+        var av = arrSum(val.profits) / val.profits.length
+        avarages.push(pipsToFixed(av))
+
+        val.profits.forEach( prof => {
+            total = total + 1
+            if (prof > 0) positives = positives + 1
+        })
+    })
+    return { tp, sl, avarages, positives, total, sums }
+}
+
+// single and combined
+function sortAvaragesAndPositives(arr) {
+    return  arr.sort((a,b) => Number(b.positives) - Number(a.positives))
+}
+
+// single and combined
 function outputProfitsByYear(arr, tp, sl) {
     if (tp != undefined) var outputTp = "TP: " + tp; else var outputTp = ""
     if (sl != undefined) var outputSl = "SL: " + sl; else var outputSl = ""
@@ -156,6 +181,23 @@ function outputProfitsByYear(arr, tp, sl) {
     return output
 }
 
+// single and combined
+function outputAvaragesAndPositives(arr) {
+    var output = "<table>"
+    arr.forEach( val => {
+        output = output + "<tr>" + 
+        "<td>TP: " + val.tp + "</td>" +
+        "<td>SL: " + val.sl + "</td>" +
+        "<td>" + val.positives + "/" + val.total + "</td>" +
+        "<td>TP: " + val.avarages+ "</td>" +
+        "<td><strong>" + val.sums + "</strong></td>" +
+        "<td style='color:red;'>" + arrSum(val.sums).toFixed(2) + "</td>" +
+        "</tr>" 
+    })
+    output = output + "</table>"
+    return output
+}
+
 module.exports = {
     // small
     arrSum,
@@ -173,5 +215,8 @@ module.exports = {
     // common
     getProfits,
     profitsByYearArr,
-    outputProfitsByYear
+    countAvaregesAndPositives,
+    sortAvaragesAndPositives,
+    outputProfitsByYear,
+    outputAvaragesAndPositives
 }

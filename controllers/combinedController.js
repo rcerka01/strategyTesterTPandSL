@@ -167,11 +167,37 @@ function outputResult(arr) {
 
 module.exports = { run: function (data) {
     var joined = joinProfits(data)
-    var result = takeProfit(joined, conf.combined.tp)
-    var profitsByYear = com.profitsByYearArr(result)
 
-    var output = com.outputProfitsByYear(profitsByYear)
-    output = output + "<br>" + outputResult(result)
+    var output = ""
+
+    var startTp = conf.combined.multipleTP.start
+    var stopTp = conf.combined.multipleTP.stop
+    var stepTp = conf.combined.multipleTP.step
+
+    switch (conf.combined.switch) {
+        case 1:
+            var result = takeProfit(joined, conf.combined.tp)
+            var profitsByYear = com.profitsByYearArr(result)
+        
+            output = output + com.outputProfitsByYear(profitsByYear) + "<br>" + outputResult(result)
+        break
+
+        case 2:
+            var avAndPos = []
+            var outputProfitsByYear = ""
+            for (var i=startTp; i<=stopTp; i=i+stepTp) {
+                var result = takeProfit(joined, i)
+                var profitsByYear = com.profitsByYearArr(result)
+
+                avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i))
+
+                outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i) 
+            }
+
+            output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
+        break
+    }
+
 
     return output
 }}
