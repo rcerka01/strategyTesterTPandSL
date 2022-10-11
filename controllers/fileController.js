@@ -100,9 +100,9 @@ function transfearDaysArr(daysArr) {
             for (var i=1; i<daysArr.length; i++) {
                 var val = daysArr[i].find(date => date.time === firstFileItem.time)
                 if (val !== void 0) {
-                profits.push(val.profit)
-                closes.push(val.close)
-                directions.push(val.direction)
+                    profits.push(val.profit)
+                    closes.push(val.close)
+                    directions.push(val.direction)
                 }
             }
 
@@ -112,6 +112,9 @@ function transfearDaysArr(daysArr) {
                 profits: profits,
                 directions: directions
             })
+
+            if (profits.length != 7) console.log(firstFileItem.time + " " + profits)
+
         }
     })
     return transfearResult

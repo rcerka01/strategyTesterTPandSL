@@ -34,7 +34,7 @@ function loadCurrenciesBoolArray(bool) {
 
 function convertTimestamp(unixTimestamp) {
     var date = new Date(unixTimestamp * 1000);
-    date.setDate(date.getDate()+1) // move one day back
+    // date.setDate(date.getDate()+1) // move one day back
     return "[" + date.toLocaleDateString("en-UK") + " " + date.toLocaleTimeString("en-UK") + "]"
   }
   
@@ -76,7 +76,8 @@ function getProfits(arr, ci, tp, sl) {
                 if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
                 else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
             }
-            
+            //
+    
             if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
             else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
             else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
@@ -92,8 +93,9 @@ function getProfits(arr, ci, tp, sl) {
             if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
             else return 0
         }
+        //
     }
-    arr.forEach( (element, i) => {
+    arr.forEach( element => {
         var profit = takeProfit(element.profits[ci], element.directions[ci])
         profitsArr.push({ date: element.date, profitDaily: element.profits[ci],  profit: profit, direction: element.directions[ci], close: CLOSE })
 

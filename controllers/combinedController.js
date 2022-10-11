@@ -109,11 +109,11 @@ function takeProfit(arr, tp) {
 
 /* OUTPUTT */
 
-function formTableArrHead(length) {
+function formTableArrHead(currencies) {
     var output = ""
-    for (var i=0; i<length; i++) {
-        output = output + "<th>" + com.getCurrencyById(i+1).name + "</th>"
-    }
+    currencies.forEach( val => {
+        output = output + "<th>" + val.name + "</th>"
+    })
     return output
 }
 
@@ -129,7 +129,8 @@ function formTableArrCells(arr, colors) {
 } 
 
 function outputResult(arr) {
-    var length = com.getEnabledCurrencies().length
+    var currencies = com.getEnabledCurrencies()
+    var length = currencies.length
     var output = "<table>"
     output = output 
                 + "<tr>"
@@ -143,10 +144,10 @@ function outputResult(arr) {
 
                 + "<tr>"
                 + "<th></th>"
-                + formTableArrHead(length)
+                + formTableArrHead(currencies)
                 + "<th></th>"
-                + formTableArrHead(length)
-                + formTableArrHead(length)
+                + formTableArrHead(currencies)
+                + formTableArrHead(currencies)
                 + "<th></th>"
                 + "</tr>"
     arr.forEach( val => {

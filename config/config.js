@@ -3,8 +3,8 @@ module.exports = {
         port: 3000
     },
     year: {
-        from: 2020,
-        to: 2021
+        from: 1990,
+        to: 2022
     },
     mapper: [
         {
@@ -15,17 +15,17 @@ module.exports = {
         {
             id: 2,
             name: "EURUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 3,
             name: "EURCHF",
-            enabled: false
+            enabled: true
         },
         {
             id: 4,
             name: "GBPUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 5,
@@ -35,12 +35,12 @@ module.exports = {
         {
             id: 6,
             name: "AUDUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 7,
             name: "NZDUSD",
-            enabled: false
+            enabled: true
         },
     ],
     
@@ -49,19 +49,19 @@ module.exports = {
     // 2 - by year
     // 3 - read intermediate file
     read: {
-        switch: 2,
-        everyDayCurrency: 1
+        switch: 3,
+        everyDayCurrency: 7
     },
     // From data.json
-    // 1 - multiple TP and SL combinations
-    // 2 - single TP and SL and every day output
+    // 1 - single TP and SL and every day output
+    // 2 - multiple TP and SL combinations
     single: {
-        switch: 2,
+        switch: 1,
 
-        currencyId: 1,
+        currencyId: 7,
 
         singleTp: 0,
-        singleSl: 300,
+        singleSl: 0,
 
         multipleTP: {
             start: 0,
@@ -85,7 +85,7 @@ module.exports = {
 
         multipleTP: {
             start: 0,
-            stop: 1000,
+            stop: 300,
             step: 50
         }
 

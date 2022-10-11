@@ -33,6 +33,15 @@ module.exports = { run: function (data) {
 
     switch (conf.single.switch) {
         case 1:
+            var tp = conf.single.singleTp
+            var sl = conf.single.singleSl
+            var profits = com.getProfits(jsonData, CI, tp/10000, sl/10000)
+            var profitsByYear = com.profitsByYearArr(profits)
+
+            output = com.outputProfitsByYear(profitsByYear, tp, sl) + outputProfits(profits)
+        break
+
+        case 2:
             var startTp = conf.single.multipleTP.start
             var stopTp = conf.single.multipleTP.stop
             var stepTp = conf.single.multipleTP.step
@@ -57,14 +66,6 @@ module.exports = { run: function (data) {
             output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
         break
 
-        case 2:
-            var tp = conf.single.singleTp
-            var sl = conf.single.singleSl
-            var profits = com.getProfits(jsonData, CI, tp/10000, sl/10000)
-            var profitsByYear = com.profitsByYearArr(profits)
-
-            output = com.outputProfitsByYear(profitsByYear, tp, sl) + outputProfits(profits)
-        break
     }
 
     return output
