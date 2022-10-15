@@ -46,9 +46,9 @@ module.exports = { run: function (data) {
             var stopTp = conf.single.multipleTP.stop
             var stepTp = conf.single.multipleTP.step
            
-            var startSl = conf.single.multipleSl.start
-            var stopSl = conf.single.multipleSl.stop
-            var stepSl = conf.single.multipleSl.step
+            var startSl = conf.single.multipleSL.start
+            var stopSl = conf.single.multipleSL.stop
+            var stepSl = conf.single.multipleSL.step
 
             var avAndPos = []
             var outputProfitsByYear = ""

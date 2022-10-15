@@ -59,6 +59,15 @@ function isOpensGreaterTp(closes, dailies, tp) {
     return false
 }
 
+function isOpensSmallerSl(closes, dailies, sl) {
+    var results = []
+    dailies.forEach( (val, i) => {
+        if (!closes[i]) results.push(val)
+    })
+    if (com.pipsToFixed(com.arrSum(results)) < sl) return true
+    return false
+}
+
 function closesAndProfits(closes, dailies) {
     var profits = []
     var indexes = []
@@ -77,7 +86,7 @@ function killTaken(closes, indexes) {
     return results
 }
 
-function takeProfit(arr, tp) {
+function takeProfit(arr, tp, sl) {
     var results = []
 
     var prev_directions = []
@@ -86,7 +95,7 @@ function takeProfit(arr, tp) {
     var closes = com.loadCurrenciesBoolArray(true)
 
     arr.forEach( val => { 
-        if (isOpensGreaterTp(closes, val.dailies, tp)) {
+        if (isOpensGreaterTp(closes, val.dailies, tp) || isOpensSmallerSl(closes, val.dailies, sl)) {
             var cp = closesAndProfits(closes, val.dailies)
             var profit = cp.profit + com.arrSum(val.profits)
             var killIndexes = cp.indexes
@@ -117,13 +126,18 @@ function formTableArrHead(currencies) {
     return output
 }
 
-function formTableArrCells(arr, colors) {
+function formTableArrCells(arr, colors, closes) {
     var output = ""
+    var strongOpen = ""
+    var strongClose = ""
     arr.forEach( (val, i) => {
         if (typeof val == "boolean" && val) 
             output = output + "<td style='color:black;'>" + val + "</td>"
-        else
-            output = output + "<td style='color:" + colors[i] + ";'>" + val + "</td>"
+        else {
+            if (closes !== void 0 &&!closes[i]) { strongOpen = "<strong>"; strongClose = "</strong>" }
+            else { strongOpen = ""; strongClose = "" }  
+            output = output + "<td style='color:" + colors[i] + ";'>" + strongOpen + val + strongClose + "</td>"
+        }
     })
     return output
 } 
@@ -134,12 +148,12 @@ function outputResult(arr) {
     var output = "<table>"
     output = output 
                 + "<tr>"
-                + "<th>date</th>"
+                + "<th>DATE</th>"
                 + "<th colspan='" + length + "'>profit</th>"
-                + "<th>sum</th>"
+                + "<th>SUM</th>"
                 + "<th colspan='" + length + "'>taken</th>"
+                + "<th>PROFIT</th>"
                 + "<th colspan='" + length + "'>close</th>"
-                + "<th>prof</th>"
                 + "</tr>"
 
                 + "<tr>"
@@ -147,18 +161,18 @@ function outputResult(arr) {
                 + formTableArrHead(currencies)
                 + "<th></th>"
                 + formTableArrHead(currencies)
-                + formTableArrHead(currencies)
                 + "<th></th>"
+                + formTableArrHead(currencies)
                 + "</tr>"
     arr.forEach( val => {
         output = output 
                     + "<tr>"
                     + "<td>" + val.date + "</td>"
-                    + formTableArrCells(val.dailies.map(com.pipsToFixed), val.directions)
+                    + formTableArrCells(val.dailies.map(com.pipsToFixed), val.directions, val.closes)
                     + "<td>" + com.pipsToFixed(val.sum) + "</td>"
                     + formTableArrCells(val.profits.map(com.pipsToFixed), val.directions)
+                    + "<td><strong>" + com.pipsToFixed(val.profit) + "</strong></td>"
                     + formTableArrCells(val.closes, val.directions)
-                    + "<td>" + com.pipsToFixed(val.profit) + "</td>"
                     + "</tr>"
     })
 
@@ -177,7 +191,7 @@ module.exports = { run: function (data) {
 
     switch (conf.combined.switch) {
         case 1:
-            var result = takeProfit(joined, conf.combined.tp)
+            var result = takeProfit(joined, conf.combined.tp, conf.combined.sl)
             var profitsByYear = com.profitsByYearArr(result)
         
             output = output + com.outputProfitsByYear(profitsByYear) + "<br>" + outputResult(result)
@@ -198,7 +212,6 @@ module.exports = { run: function (data) {
             output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
         break
     }
-
 
     return output
 }}

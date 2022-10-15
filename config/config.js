@@ -6,16 +6,17 @@ module.exports = {
         from: 1990,
         to: 2022
     },
+    closingHour: 22,
     mapper: [
         {
             id: 1,
             name: "USDCHF",
-            enabled: true
+            enabled: false
         },
         {
             id: 2,
             name: "EURUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 3,
@@ -25,22 +26,22 @@ module.exports = {
         {
             id: 4,
             name: "GBPUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 5,
             name: "USDCAD",
-            enabled: true
+            enabled: false
         },
         {
             id: 6,
             name: "AUDUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 7,
             name: "NZDUSD",
-            enabled: true
+            enabled: false
         },
     ],
     
@@ -49,16 +50,16 @@ module.exports = {
     // 2 - by year
     // 3 - read intermediate file
     read: {
-        switch: 3,
-        everyDayCurrency: 7
+        switch: 1,
+        everyDayCurrency: 3
     },
     // From data.json
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
     single: {
-        switch: 1,
+        switch: 2,
 
-        currencyId: 7,
+        currencyId: 2,
 
         singleTp: 0,
         singleSl: 0,
@@ -68,8 +69,8 @@ module.exports = {
             stop: 300,
             step: 20
         },
-        multipleSl: {
-            start: -300,
+        multipleSL: {
+            start: -100,
             stop: 0,
             step: 20
         },
@@ -79,16 +80,21 @@ module.exports = {
     // 1 - single tp
     // 2 - multiple tp
     combined: {
-        switch: 1,
+        switch: 2,
 
-        tp: 60,
+        tp: 200,
+        sl: -200,
 
         multipleTP: {
             start: 0,
             stop: 300,
             step: 50
+        },
+
+        multipleSL: {
+            start: 0,
+            stop: -300,
+            step: 50
         }
-
     }
-
 }

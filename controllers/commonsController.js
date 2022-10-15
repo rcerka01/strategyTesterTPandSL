@@ -7,12 +7,12 @@ function arrSum(val) {
     } else return 0
 }
 
-function dateTimeToYear(time) {
-    return time.split("/")[2].split(" ")[0]
+function dateToYear(date) {
+    return date.split("/")[2].slice(0, -1) // .split(" ")[0]
  }
 
-function dateTimeToMonth(time) {
-    return time.split("/")[0].substring(1)
+function dateToMonth(date) {
+    return date.split("/")[0].substring(1)
 }
 
 function pipsToFixed(val) {
@@ -32,14 +32,27 @@ function loadCurrenciesBoolArray(bool) {
     return results
 }
 
-function convertTimestamp(unixTimestamp) {
+function convertDateFromUnixTimestamp(unixTimestamp) {
     var date = new Date(unixTimestamp * 1000);
     // date.setDate(date.getDate()+1) // move one day back
-    return "[" + date.toLocaleDateString("en-UK") + " " + date.toLocaleTimeString("en-UK") + "]"
-  }
+    return "[" + date.toLocaleDateString("en-UK") + "]"
+}
+
+function convertTimeFromUnixTimestamp(unixTimestamp) {
+    var date = new Date(unixTimestamp * 1000);
+    return "[" + date.toLocaleTimeString("en-UK") + "]"
+}
+
+function convertDateFromTimestamp(ts) {
+    return "[" + ts.toLocaleDateString("en-UK") + "]"
+}
+
+function convertTimeFromTimestamp(ts) {
+    return "[" + ts.toLocaleTimeString("en-UK") + "]"
+}
   
 function filterByYear(arr, year) {
-    return arr.filter(val => { if (dateTimeToYear(val.time) == year) return val })
+    return arr.filter(val => { if (dateToYear(val.date) == year) return val })
 }
 
 function saveJson(json) {
@@ -112,9 +125,9 @@ function profitsByYearArr(arr) {
 
     for (var i=conf.year.from; i<=conf.year.to; i++) {
         var yearlyArr = []
-        var byYear = arr.filter(val => dateTimeToYear(val.date) == i)
+        var byYear = arr.filter(val => dateToYear(val.date) == i)
         for (var ii=1; ii<=12; ii++) {
-            var byMonth = byYear.filter(val => dateTimeToMonth(val.date) == ii)
+            var byMonth = byYear.filter(val => dateToMonth(val.date) == ii)
             yearlyArr.push(arrSum(byMonth.map(val => val.profit)))
         }
         result.push({ year: i, profits: yearlyArr, sum: arrSum(yearlyArr.filter(val => val != undefined))})
@@ -203,12 +216,15 @@ function outputAvaragesAndPositives(arr) {
 module.exports = {
     // small
     arrSum,
-    dateTimeToYear,
-    dateTimeToMonth,
+    dateToYear,
+    dateToMonth,
     pipsToFixed,
     roundToFixed,
     loadCurrenciesBoolArray,
-    convertTimestamp,
+    convertDateFromUnixTimestamp,
+    convertTimeFromUnixTimestamp,
+    convertDateFromTimestamp,
+    convertTimeFromTimestamp,
     filterByYear,
     saveJson,
     getCurrencyById,

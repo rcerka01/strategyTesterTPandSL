@@ -7,10 +7,6 @@ const fs = require('fs')
 /* CONTROLLER */
 
 function formLines(dataArray) {
-    var takeNext = false
-    var directionToGreen = false
-    var directionToRed = false
-
     var direction = ""
 
     var startValue = 0
@@ -19,8 +15,8 @@ function formLines(dataArray) {
     var sums = []
     var days = []
 
-    function addItem(ts, prevProf, currentProf, isIncrAcc) {
-        if (com.dateTimeToYear(ts) >= conf.year.from && com.dateTimeToYear(ts) <= conf.year.to) {
+    function addItem(date, time, prevProf, currentProf, isIncrAcc) {
+        if (com.dateToYear(date) >= conf.year.from && com.dateToYear(date) <= conf.year.to) {
             if (direction == "red") {
                 var profit = prevProf - currentProf
                     var test = com.roundToFixed(prevProf) + " - " + com.roundToFixed(currentProf)
@@ -31,43 +27,33 @@ function formLines(dataArray) {
                 var test = com.roundToFixed(currentProf) + " - " + com.roundToFixed(prevProf)
                 if (isIncrAcc) acc = acc + profit
             }
-            return { profit: profit, time: ts, acc: acc, close:currentProf, direction: direction, test: test }
+            return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test }
         }
     }
 
     dataArray.forEach( line => {
         var lineArr = line.split(",")
-        var ts = lineArr[0]
+        var ts = Number(lineArr[0]) + 86400 // todo Reemove when day lagging issue resolved
         var sh1 = lineArr[7]
         var sh2 = lineArr[8]
+        var convertedDate = com.convertDateFromUnixTimestamp(ts)
+        var convertedTime = com.convertTimeFromUnixTimestamp(ts)
 
-        var convertedTs = com.convertTimestamp(ts)
+        if (com.dateToYear(convertedDate) >= conf.year.from && com.dateToYear(convertedDate) <= conf.year.to) {
+            days.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], false))
 
-        if (com.dateTimeToYear(convertedTs) >= conf.year.from && com.dateTimeToYear(convertedTs) <= conf.year.to) {
-
-            days.push(addItem(convertedTs, startValue, lineArr[4], false))
-
-            if (takeNext) {
-
-                sums.push(addItem(convertedTs, startValue, lineArr[4], true))
-                takeNext = false
-
-                if (directionToRed) { direction = "red"; directionToRed = false }
-                if (directionToGreen) { direction = "green"; directionToGreen = false }
-               
+            if (sh1 != "NaN") {
+                sums.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], true))
+                direction = "red";
                 startValue = lineArr[4]
             }
 
-            if (sh1 != "NaN") {
-                takeNext = true
-                directionToRed = true
-            }
-
             if (sh2 != "NaN") {
-                takeNext = true
-                directionToGreen = true
+                sums.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], true))
+                direction = "green";
+                startValue = lineArr[4]
             }
-        }
+        } 
     })
     return { sums: sums, days: days }
 }
@@ -85,39 +71,51 @@ const readFile = async path => {
 }
 
 function transfearDaysArr(daysArr) {
-    var transfearResult = []
+    var result = []
 
-    daysArr[0].forEach( firstFileItem => {
-        if (firstFileItem !== void 0) {
-            var profits = []
-            var closes = []
-            var directions = []
+    var from = new Date(conf.year.from, 0, 1, conf.closingHour);
+    var to = new Date(conf.year.to, 11, 31, conf.closingHour);  
 
-            profits.push(firstFileItem.profit)
-            closes.push(firstFileItem.close)
-            directions.push(firstFileItem.direction)
+    prevCloses = []
+    prevProfits = []
+    prevDirections = []
+
+    for (var day = from; day <= to; day.setDate(day.getDate() + 1)) {
+        var profits = []
+        var closes = []
+        var directions = []
+
+        var convertedDate = com.convertDateFromTimestamp(day)
+        var convertedTime = com.convertTimeFromTimestamp(day)
+
+        for (var i=0; i<daysArr.length; i++) {
+            var val = daysArr[i].find( item => item.date == convertedDate )
             
-            for (var i=1; i<daysArr.length; i++) {
-                var val = daysArr[i].find(date => date.time === firstFileItem.time)
-                if (val !== void 0) {
-                    profits.push(val.profit)
-                    closes.push(val.close)
-                    directions.push(val.direction)
-                }
+            if (val !== void 0) {
+                if (val.close !== void 0) { closes.push(val.close); prevCloses[i] = val.close }
+                else closes.push(prevCloses[i])
+
+                if (val.profit !== void 0) { profits.push(val.profit); prevProfits[i] = val.profit }
+                else profits.push(prevProfits[i])
+
+                if (val.direction !== void 0) { directions.push(val.direction); prevDirections[i] = val.direction }
+                else directions.push(prevDirections[i])
+            } else {
+                closes.push(prevCloses[i])
+                profits.push(prevProfits[i])
+                directions.push(prevDirections[i])
             }
-
-            transfearResult.push({
-                date: firstFileItem.time,
-                closes: closes,
-                profits: profits,
-                directions: directions
-            })
-
-            if (profits.length != 7) console.log(firstFileItem.time + " " + profits)
-
         }
-    })
-    return transfearResult
+
+        result.push({
+            date: convertedDate,
+            time: convertedTime,
+            closes: closes,
+            profits: profits,
+            directions: directions
+        })
+    }  
+    return result
 }
 
 /* OUTPUTT */
@@ -125,7 +123,7 @@ function transfearDaysArr(daysArr) {
 /* buy year */
 function formatMultipleFileTable(multArr, currencies) {
     var output = "<table>"
-    for (var i=conf.year.from; i<conf.year.to+1; i++) {
+    for (var i=conf.year.from; i<conf.year.to + 1; i++) {
         output = output + "<tr>" + formatMultipleFileRow(multArr, i.toString(), currencies) + "</tr>"
     }
     return output + "</table>"
@@ -164,7 +162,7 @@ function formatYearlyOutput(arr) {
       output = output + 
         "<tr>" +
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + COUNTER  + "</td>" + 
-          "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.time + "</td>" + 
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.date + "</td>" + 
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.direction + "</td>" +
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(data.profit) + "</td>" +
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(yearlyProfit) + "</td>" +
@@ -182,11 +180,12 @@ function formatYearlyOutput(arr) {
 /* every day */ 
 function formatDay(days, currency) {
     var output = "<table><tr><th colspan=7>" + currency + "</th></tr>" +
-                    "<th>Nr</th><th>Date</th><th>Close</th><th>Direction</th><th>Profit</th><th>Test</th><th>Cash</th>"
+                    "<th>Nr</th><th>Date</th><th>Time</th><th>Close</th><th>Direction</th><th>Profit</th><th>Test</th><th>Cash</th>"
     var counter = 1
     days.forEach( day => {
         output = output + "<tr>" +
         "<td><strong>" + counter + "</strong></td>" + 
+        "<td>" + day.date + "</td>" +
         "<td>" + day.time + "</td>" +
         "<td><strong>" + com.roundToFixed(day.close) + "</strong></td>" +
         "<td>" + day.direction + "</td>" +
@@ -205,7 +204,7 @@ module.exports = { readFiles: async function () {
         var cur = conf.mapper
         for (var i=0; i<cur.length; i++) {
             if (cur[i].enabled) {
-                var path = "uploads/" + cur[i].id + ".csv"
+                var path = "uploads/" + cur[i].id + "-" + cur[i].name + ".csv"
                 currencies.push(cur[i])
                 data.push(await readFile(path))
             }
