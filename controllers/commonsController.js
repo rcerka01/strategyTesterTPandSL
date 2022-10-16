@@ -71,6 +71,10 @@ function getEnabledCurrencies() {
     return conf.mapper.filter(val => val.enabled == true)
 }
 
+function findCurrencyIndexById(id) {
+    return getEnabledCurrencies().findIndex(val => val.id == id)
+}
+
 // *** USE IN MULTIPLE CONTROLLERS *** //
 
 // single and combined
@@ -216,6 +220,7 @@ module.exports = {
     saveJson,
     getCurrencyById,
     getEnabledCurrencies,
+    findCurrencyIndexById,
 
     // common
     getProfits,

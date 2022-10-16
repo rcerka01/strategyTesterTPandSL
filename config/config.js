@@ -11,7 +11,7 @@ module.exports = {
         {
             id: 1,
             name: "USDCHF",
-            enabled: true
+            enabled: false
         },
         {
             id: 2,
@@ -21,7 +21,7 @@ module.exports = {
         {
             id: 3,
             name: "EURCHF",
-            enabled: true
+            enabled: false
         },
         {
             id: 4,
@@ -31,12 +31,12 @@ module.exports = {
         {
             id: 5,
             name: "USDCAD",
-            enabled: true
+            enabled: false
         },
         {
             id: 6,
             name: "AUDUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 7,
@@ -45,8 +45,8 @@ module.exports = {
         },
     ],
 
-    tp: true,
-    sl: true,
+    tp: false,
+    sl: false,
     
     // Directly from TV files
     // 1 - every day

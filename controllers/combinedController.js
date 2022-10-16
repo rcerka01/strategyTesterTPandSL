@@ -1,24 +1,27 @@
 const com = require("./commonsController");
 const conf = require("../config/config");
+const { single } = require("../config/config");
 
 // *** FROM data.json *** //
 
 /* CONTROLLER */
 
 function joinProfits(data) {
-    var depth = com.getEnabledCurrencies().length
-
     var jsonData = JSON.parse(data)
+    var currencies = com.getEnabledCurrencies()
+
     var arr = []
     var result = []
-    for (var i=0; i<depth; i++) {
-        arr.push(com.getProfits(jsonData, i, 0, 0))
-    }
+
+    currencies.forEach( val => {
+        arr.push(com.getProfits(jsonData, val.id - 1, conf.single.singleTp, conf.single.singleSl)) 
+    })
+
     arr[0].forEach( (val, index) => {
         var dailies = []
         var profits = []
         var directions = []
-        for (var i=0; i<depth; i++) {
+        for (var i=0; i < currencies.length; i++) {
             dailies.push(arr[i][index].profitDaily)
             profits.push(arr[i][index].profit)
             directions.push(arr[i][index].direction)

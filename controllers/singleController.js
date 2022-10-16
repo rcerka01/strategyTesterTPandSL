@@ -1,7 +1,7 @@
 const com = require("./commonsController");
 const conf = require("../config/config");
 
-var CI = com.getEnabledCurrencies().findIndex(val => val.id == conf.single.currencyId)
+var CI = com.findCurrencyIndexById(conf.single.currencyId)
 
 // *** FROM data.json *** //
 
