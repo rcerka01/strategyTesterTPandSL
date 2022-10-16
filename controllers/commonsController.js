@@ -75,48 +75,35 @@ function getEnabledCurrencies() {
 
 // single and combined
 function getProfits(arr, ci, tp, sl) {
-    var profitsArr = [] 
-    var CLOSE = false
-    var PREV_CLOSE = true
-    var PREV_PROFIT = 0
-    var PREV_DIR = ""
-    function takeProfit(profit, dir) {
+    var resultsArr = []
 
-        // for single output with TP and SL
-        if (tp != 0 || sl != 0) {
-            // disable to remove SL
-            if (sl != 0) {
-                if (!CLOSE && profit <= sl) { CLOSE = true; return profit }
-                else if (PREV_DIR != dir && profit <= sl) { CLOSE = true; return profit }
-            }
-            //
-    
-            if (PREV_CLOSE == false && PREV_DIR != dir && profit >= tp) { CLOSE = true; return Number(PREV_PROFIT) + Number(profit) }
-            else if (!CLOSE && profit >= tp) { CLOSE = true; return profit }
-            else if (!CLOSE && PREV_DIR != dir) { return PREV_PROFIT }
-            else if (CLOSE && PREV_DIR != dir) {
-                if (profit >= tp) return profit
-                else { CLOSE = false; return 0 }
-            }
-            else return 0
-        }
+    var closeFlag = false
 
-        // only this to remove TP and SL (use in combined), and: var CLOSE = false
-        if (tp == 0 && sl ==0) {
-            if (!CLOSE && PREV_DIR != dir) { CLOSE = false; return PREV_PROFIT }
-            else return 0
-        }
-        //
-    }
-    arr.forEach( element => {
-        var profit = takeProfit(element.profits[ci], element.directions[ci])
-        profitsArr.push({ date: element.date, profitDaily: element.profits[ci],  profit: profit, direction: element.directions[ci], close: CLOSE })
+    arr.forEach( (val, i) => {
 
-        PREV_CLOSE = CLOSE
-        PREV_DIR = element.directions[ci]
-        PREV_PROFIT = element.profits[ci]
+        var profit =  0
+
+        // sl
+        if (conf.sl && !closeFlag && val.profits[ci] <= sl) { closeFlag = true; profit = val.profits[ci] }
+
+        // tp
+        if (conf.tp && !closeFlag && val.profits[ci] >= tp) { closeFlag = true; profit = val.profits[ci] }
+
+        // norm
+        if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) profit = val.profits[ci]
+        else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) closeFlag = false
+
+        resultsArr.push(
+            {
+                date: val.date, 
+                profitDaily: val.profits[ci], 
+                profit: profit, 
+                direction: val.directions[ci], 
+                close: closeFlag 
+            })
     });  
-    return profitsArr
+
+    return resultsArr
 }
 
 // single and combined
@@ -163,7 +150,7 @@ function sortAvaragesAndPositives(arr) {
 
 // single and combined
 function outputProfitsByYear(arr, tp, sl) {
-    if (tp != undefined) var outputTp = "TP: " + tp; else var outputTp = ""
+    if (tp != undefined) var outputTp = "TP: " + tp + "<br>"; else var outputTp = ""
     if (sl != undefined) var outputSl = "SL: " + sl; else var outputSl = ""
     var output = "<table style='border: 1px solid black;'>" +
                     "<tr>"

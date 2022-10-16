@@ -11,12 +11,12 @@ module.exports = {
         {
             id: 1,
             name: "USDCHF",
-            enabled: false
+            enabled: true
         },
         {
             id: 2,
             name: "EURUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 3,
@@ -26,24 +26,27 @@ module.exports = {
         {
             id: 4,
             name: "GBPUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 5,
             name: "USDCAD",
-            enabled: false
+            enabled: true
         },
         {
             id: 6,
             name: "AUDUSD",
-            enabled: false
+            enabled: true
         },
         {
             id: 7,
             name: "NZDUSD",
-            enabled: false
+            enabled: true
         },
     ],
+
+    tp: true,
+    sl: true,
     
     // Directly from TV files
     // 1 - every day
@@ -51,18 +54,19 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 1,
-        everyDayCurrency: 3
+        everyDayCurrency: 2
     },
+
     // From data.json
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
     single: {
-        switch: 2,
+        switch: 1,
 
         currencyId: 2,
 
-        singleTp: 0,
-        singleSl: 0,
+        singleTp: 50,
+        singleSl: -40,
 
         multipleTP: {
             start: 0,
@@ -80,7 +84,7 @@ module.exports = {
     // 1 - single tp
     // 2 - multiple tp
     combined: {
-        switch: 2,
+        switch: 1,
 
         tp: 200,
         sl: -200,
