@@ -7,7 +7,6 @@ var CI = com.findCurrencyIndexById(conf.single.currencyId)
 
 /* OUTPUTT */
 
-// 2
 function outputProfits(arr) {
     var output = "<table><tr><th></th><th></th><th>Daily</th><th>Profit</th><th>close</th></tr>"
     arr.forEach( (element, i) => {

@@ -1,6 +1,5 @@
 const com = require("./commonsController");
 const conf = require("../config/config");
-const { single } = require("../config/config");
 
 // *** FROM data.json *** //
 
@@ -14,7 +13,7 @@ function joinProfits(data) {
     var result = []
 
     currencies.forEach( val => {
-        arr.push(com.getProfits(jsonData, val.id - 1, conf.single.singleTp, conf.single.singleSl)) 
+        arr.push(com.getProfits(jsonData, com.findCurrencyIndexById(val.id), conf.single.singleTp, conf.single.singleSl)) 
     })
 
     arr[0].forEach( (val, index) => {
@@ -32,25 +31,13 @@ function joinProfits(data) {
     return result
 }
 
-function createOutputItem(val, closes, commonProfit) {
-    return { date: val.date, dailies: val.dailies, profits: val.profits, directions: val.directions, sum: val.sum, closes: closes, profit: commonProfit }
-}
-
-function takeIfSwapDirection(dir, prevDir, closes, profits) {
+function isOpensSmallerSl(closes, dailies, sl) {
     var results = []
-    closes.forEach( (val, i) => {
-        if (!val && prevDir[i] != dir[i]) results.push(profits[i])
+    dailies.forEach( (val, i) => {
+        if (!closes[i]) results.push(val)
     })
-    return com.arrSum(results)
-}
-
-function updateCloses(prevDir, dir, prevCloses) {
-    var results = []
-    prevCloses.forEach( (val, i) => {
-        if (prevDir[i] != dir[i]) results.push(false)
-        else results.push(val)
-    })
-    return results
+    if (com.pipsToFixed(com.arrSum(results)) < sl) return true
+    return false
 }
 
 function isOpensGreaterTp(closes, dailies, tp) {
@@ -62,62 +49,42 @@ function isOpensGreaterTp(closes, dailies, tp) {
     return false
 }
 
-function isOpensSmallerSl(closes, dailies, sl) {
-    var results = []
-    dailies.forEach( (val, i) => {
-        if (!closes[i]) results.push(val)
-    })
-    if (com.pipsToFixed(com.arrSum(results)) < sl) return true
-    return false
-}
-
-function closesAndProfits(closes, dailies) {
-    var profits = []
-    var indexes = []
-    dailies.forEach( (val, i) => {
-        if (!closes[i]) { profits.push(val); indexes.push(i) }
-    })
-    return { profit: Number(com.arrSum(profits)), indexes: indexes }
-}
-
-function killTaken(closes, indexes) {
-    var results = []
-    closes.forEach( (val, i) => {
-       if (indexes.includes(i)) results.push(true)
-       else results.push(val)
-    })
-    return results
+function createOutputItem(val, closes, commonProfit) {
+    return { 
+        date: val.date, 
+        dailies: val.dailies, 
+        profits: val.profits, 
+        directions: val.directions, 
+        sum: val.sum, 
+        closes: closes.map(Boolean), 
+        profit: commonProfit }
 }
 
 function takeProfit(arr, tp, sl) {
     var results = []
+    var closes = com.loadCurrenciesBoolArray(false)
 
-    var prev_directions = []
-    var prev_closes = com.loadCurrenciesBoolArray(true)
+    arr.forEach( val => {
+        var profits = []
 
-    var closes = com.loadCurrenciesBoolArray(true)
-
-    arr.forEach( val => { 
         if (isOpensGreaterTp(closes, val.dailies, tp) || isOpensSmallerSl(closes, val.dailies, sl)) {
-            var cp = closesAndProfits(closes, val.dailies)
-            var profit = cp.profit + com.arrSum(val.profits)
-            var killIndexes = cp.indexes
-            
-            closes = killTaken(updateCloses(prev_directions, val.directions, prev_closes), killIndexes)
-            results.push(createOutputItem(val, closes, profit))
-        }
-        else  {
-            var profit = takeIfSwapDirection(val.directions, prev_directions, closes, val.profits)
-            closes = updateCloses(prev_directions, val.directions, prev_closes)
-            results.push(createOutputItem(val, closes, profit))
-        }
-        
-        prev_directions = val.directions
-        prev_closes = closes
+            closes.forEach( (close, i) => {
+                if (!close) { closes[i] = true; profits.push(val.dailies[i]) }
+            })
+        } 
+
+        closes.forEach( (close, i) => {
+            if (val.profits[i] != 0) { 
+                if (close) closes[i] = false
+                else profits.push(val.profits[i]) 
+            }
+        })
+
+        results.push(createOutputItem(val, closes, com.arrSum(profits)))
     })
 
     return results
-} 
+}
 
 /* OUTPUTT */
 
@@ -172,7 +139,7 @@ function outputResult(arr) {
                     + "<tr>"
                     + "<td>" + val.date + "</td>"
                     + formTableArrCells(val.dailies.map(com.pipsToFixed), val.directions, val.closes)
-                    + "<td>" + com.pipsToFixed(val.sum) + "</td>"
+                    + "<td><strong>" + com.pipsToFixed(val.sum) + "</strong></td>"
                     + formTableArrCells(val.profits.map(com.pipsToFixed), val.directions)
                     + "<td><strong>" + com.pipsToFixed(val.profit) + "</strong></td>"
                     + formTableArrCells(val.closes, val.directions)
@@ -192,24 +159,32 @@ module.exports = { run: function (data) {
     var stopTp = conf.combined.multipleTP.stop
     var stepTp = conf.combined.multipleTP.step
 
+
+    var startSl = conf.combined.multipleSL.start
+    var stopSl = conf.combined.multipleSL.stop
+    var stepSl = conf.combined.multipleSL.step
+
     switch (conf.combined.switch) {
         case 1:
             var result = takeProfit(joined, conf.combined.tp, conf.combined.sl)
             var profitsByYear = com.profitsByYearArr(result)
         
-            output = output + com.outputProfitsByYear(profitsByYear) + "<br>" + outputResult(result)
-        break
+            output = output + com.outputProfitsByYear(profitsByYear,conf.combined.tp, conf.combined.sl) + "<br>" + outputResult(result)
+            break
 
         case 2:
             var avAndPos = []
             var outputProfitsByYear = ""
             for (var i=startTp; i<=stopTp; i=i+stepTp) {
-                var result = takeProfit(joined, i)
-                var profitsByYear = com.profitsByYearArr(result)
 
-                avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i))
+                for (var ii=startSl; ii<=stopSl; ii=ii+stepSl) {
+                    var result = takeProfit(joined, i)
+                    var profitsByYear = com.profitsByYearArr(result)
 
-                outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i) 
+                    avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i, ii))
+
+                    outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i, ii)
+                }
             }
 
             output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
