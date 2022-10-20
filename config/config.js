@@ -11,12 +11,12 @@ module.exports = {
         {
             id: 1,
             name: "USDCHF",
-            enabled: true
+            enabled: false
         },
         {
             id: 2,
             name: "EURUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 3,
@@ -36,7 +36,7 @@ module.exports = {
         {
             id: 6,
             name: "AUDUSD",
-            enabled: true
+            enabled: false
         },
         {
             id: 7,
@@ -53,8 +53,8 @@ module.exports = {
     // 2 - by year
     // 3 - read intermediate file
     read: {
-        switch: 3,
-        everyDayCurrency: 3
+        switch: 1,
+        everyDayCurrency: 7
     },
 
     // From data.json
@@ -63,18 +63,18 @@ module.exports = {
     single: {
         switch: 1,
 
-        currencyId: 2,
+        currencyId: 5,
 
-        singleTp: 50,
+        singleTp: 40,
         singleSl: -40,
 
         multipleTP: {
             start: 0,
-            stop: 300,
+            stop: 50,
             step: 20
         },
         multipleSL: {
-            start: -100,
+            start: -40,
             stop: 0,
             step: 20
         },
@@ -91,14 +91,14 @@ module.exports = {
 
         multipleTP: {
             start: 0,
-            stop: 700,
-            step: 80
+            stop: 300,
+            step: 100
         },
 
         multipleSL: {
-            start: -700,
+            start: -300,
             stop: 0,
-            step: 80
+            step: 100
         }
     }
 }

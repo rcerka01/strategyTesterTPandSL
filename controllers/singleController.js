@@ -1,8 +1,6 @@
 const com = require("./commonsController");
 const conf = require("../config/config");
 
-var CI = com.findCurrencyIndexById(conf.single.currencyId)
-
 // *** FROM data.json *** //
 
 /* OUTPUTT */
@@ -30,11 +28,14 @@ module.exports = { run: function (data) {
     var jsonData = JSON.parse(data)
     var output = ""
 
+    var ci = com.findCurrencyIndexById(conf.single.currencyId)
+
     switch (conf.single.switch) {
         case 1:
             var tp = conf.single.singleTp
             var sl = conf.single.singleSl
-            var profits = com.getProfits(jsonData, CI, tp/10000, sl/10000)
+
+            var profits = com.getProfits(jsonData, ci, tp/10000, sl/10000)
             var profitsByYear = com.profitsByYearArr(profits)
 
             output = com.outputProfitsByYear(profitsByYear, tp, sl) + outputProfits(profits)
@@ -53,7 +54,8 @@ module.exports = { run: function (data) {
             var outputProfitsByYear = ""
             for (var i=startTp; i<=stopTp; i=i+stepTp) {
                 for (var ii=startSl; ii<=stopSl; ii=ii+stepSl) {
-                    var profits = com.getProfits(jsonData, CI, i/10000, ii/10000)
+
+                    var profits = com.getProfits(jsonData, ci, i/10000, ii/10000)
                     var profitsByYear = com.profitsByYearArr(profits)
 
                     avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i, ii))

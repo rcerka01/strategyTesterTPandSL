@@ -159,7 +159,6 @@ module.exports = { run: function (data) {
     var stopTp = conf.combined.multipleTP.stop
     var stepTp = conf.combined.multipleTP.step
 
-
     var startSl = conf.combined.multipleSL.start
     var stopSl = conf.combined.multipleSL.stop
     var stepSl = conf.combined.multipleSL.step
@@ -170,7 +169,7 @@ module.exports = { run: function (data) {
             var profitsByYear = com.profitsByYearArr(result)
         
             output = output + com.outputProfitsByYear(profitsByYear,conf.combined.tp, conf.combined.sl) + "<br>" + outputResult(result)
-            break
+        break
 
         case 2:
             var avAndPos = []
@@ -178,7 +177,7 @@ module.exports = { run: function (data) {
             for (var i=startTp; i<=stopTp; i=i+stepTp) {
 
                 for (var ii=startSl; ii<=stopSl; ii=ii+stepSl) {
-                    var result = takeProfit(joined, i)
+                    var result = takeProfit(joined, i, ii)
                     var profitsByYear = com.profitsByYearArr(result)
 
                     avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i, ii))

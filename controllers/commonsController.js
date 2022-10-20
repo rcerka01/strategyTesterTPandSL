@@ -191,14 +191,26 @@ function outputProfitsByYear(arr, tp, sl) {
 function outputAvaragesAndPositives(arr) {
     var output = "<table>"
     arr.forEach( val => {
-        output = output + "<tr>" + 
-        "<td>TP: " + val.tp + "</td>" +
-        "<td>SL: " + val.sl + "</td>" +
-        "<td>" + val.positives + "/" + val.total + "</td>" +
-        "<td>TP: " + val.avarages+ "</td>" +
-        "<td><strong>" + val.sums + "</strong></td>" +
-        "<td style='color:red;'>" + arrSum(val.sums).toFixed(2) + "</td>" +
-        "</tr>" 
+        output = output + 
+            "<tr>" + 
+                "<td>TP: " + val.tp + "</td>" +
+                "<td>SL: " + val.sl + "</td>" +
+                "<td>" + val.positives + "/" + val.total + "</td>" +
+                "<td><strong>" + val.sums.map(val => " " + val) + "</strong></td>" +
+            "</tr>" + 
+            "<tr>" + 
+                "<td></td>" +
+                "<td></td>" +
+                "<td style='color:red;'>" + arrSum(val.sums).toFixed(2)  + "</td>" +
+                "<td>" + val.avarages.map(val => " " + val)  + "</td>" +
+            "</tr>" +
+            "<tr>" + 
+                "<td></td>" +
+                "<td></td>" +
+                "<td></td>" +
+                "<td>" + val.sums.sort( (a,b) => Number(a) - Number(b)).map(val => " " + val)  + "</td>" +
+
+            "</tr>" 
     })
     output = output + "</table>"
     return output
