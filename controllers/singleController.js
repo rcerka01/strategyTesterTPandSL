@@ -5,18 +5,27 @@ const conf = require("../config/config");
 
 /* OUTPUTT */
 
-function outputProfits(arr) {
-    var output = "<table><tr><th></th><th></th><th>Daily</th><th>Profit</th><th>close</th></tr>"
+function outputProfits(arr, currency) {
+    var output = "<table><tr><th></th><th></th><th>Daily PIPs</th><th>Daily GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th></tr>"
     arr.forEach( (element, i) => {
-
         if (!element.close) var color = element.direction 
         else var color= "black"
+
+        var onePip = com.getOnePipValueGbp(currency)
+
+        var dailyProfitInPips = com.convertToPips(element.profitDaily, currency)
+        var dailyProfitInGBP = dailyProfitInPips * onePip
+
+        var profitInPips = com.convertToPips(element.profit, currency)
+        var profitInGBP = profitInPips * onePip
 
         output = output + "<tr>" +
         "<td>" + i + "</td>" +
         "<td>" + element.date + "</td>" +
-        "<td><span style='color:" + element.direction + ";'>" + com.pipsToFixed(element.profitDaily) + "</span></td>" +
-        "<td>" + com.pipsToFixed(element.profit)  + "</td>" +
+        "<td><span style='color:" + element.direction + ";'>" + dailyProfitInPips.toFixed() + "</span></td>" +
+        "<td><span style='color:" + element.direction + ";'>" + dailyProfitInGBP.toFixed(2) + "</span></td>" +
+        "<td>" + profitInPips.toFixed()  + "</td>" +
+        "<td>" + profitInGBP.toFixed(2)  + "</td>" +
         "<td><span style='color:" + color + ";'>" + element.close + "</td>" +
         "</tr>" 
     })
@@ -26,19 +35,22 @@ function outputProfits(arr) {
 
 module.exports = { run: function (data) {
     var jsonData = JSON.parse(data)
-    var output = ""
 
     var ci = com.findCurrencyIndexById(conf.single.currencyId)
+
+    var currency = conf.mapper.find(currency => currency.id == conf.single.currencyId)
+
+    var output = currency.name + "<br>"
 
     switch (conf.single.switch) {
         case 1:
             var tp = conf.single.singleTp
             var sl = conf.single.singleSl
 
-            var profits = com.getProfits(jsonData, ci, tp/10000, sl/10000)
+            var profits = com.getProfits(jsonData, ci, tp, sl, currency)
             var profitsByYear = com.profitsByYearArr(profits)
 
-            output = com.outputProfitsByYear(profitsByYear, tp, sl) + outputProfits(profits)
+            output = com.outputProfitsByYear(profitsByYear, tp, sl, currency) + outputProfits(profits, currency)
         break
 
         case 2:
@@ -55,19 +67,17 @@ module.exports = { run: function (data) {
             for (var i=startTp; i<=stopTp; i=i+stepTp) {
                 for (var ii=startSl; ii<=stopSl; ii=ii+stepSl) {
 
-                    var profits = com.getProfits(jsonData, ci, i/10000, ii/10000)
+                    var profits = com.getProfits(jsonData, ci, i, ii, currency)
                     var profitsByYear = com.profitsByYearArr(profits)
 
                     avAndPos.push(com.countAvaregesAndPositives(profitsByYear, i, ii))
 
-                    outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i, ii) 
+                    outputProfitsByYear = outputProfitsByYear + "<br>" +  com.outputProfitsByYear(profitsByYear, i, ii, currency) 
                 }
             }
 
-            output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos)) + outputProfitsByYear
+            output = output + com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos), currency) + outputProfitsByYear
         break
-
     }
-
     return output
 }}

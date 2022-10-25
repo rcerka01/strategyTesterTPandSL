@@ -1,6 +1,7 @@
 const conf = require("../config/config");
 const com = require("./commonsController");
-const fs = require('fs')
+const fs = require('fs');
+const e = require("express");
 
 // *** FROM TRAIDING VIEW FiLES *** //
 
@@ -19,12 +20,12 @@ function formLines(dataArray) {
         if (com.dateToYear(date) >= conf.year.from && com.dateToYear(date) <= conf.year.to) {
             if (direction == "red") {
                 var profit = prevProf - currentProf
-                    var test = com.roundToFixed(prevProf) + " - " + com.roundToFixed(currentProf)
+                var test = prevProf + " - " + currentProf
                 if (isIncrAcc) acc = acc + profit
             }
             else if (direction == "green") {
                 var profit = currentProf - prevProf
-                var test = com.roundToFixed(currentProf) + " - " + com.roundToFixed(prevProf)
+                var test = currentProf + " - " + prevProf
                 if (isIncrAcc) acc = acc + profit
             }
             return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test }
@@ -132,17 +133,18 @@ function formatMultipleFileTable(multArr, currencies) {
 function formatMultipleFileRow(multArr, year, currencies) {
     var output = ""
     multArr.forEach( (arr, index) => {
+        var currency = currencies[index]
         output = output + 
                     "<td style='text-align:center;padding:10px;vertical-align:top'>" + 
-                        "<strong>" + currencies.map(val => val.name)[index] + " " + year + "</strong>" +
+                        "<strong>" + com.createTitle(currency) + "<br>" + year + "</strong>" +
                         "</br></br>" +
-                        formatYearlyOutput(com.filterByYear(arr, year)) + 
+                        formatYearlyOutput(com.filterByYear(arr, year), currency) + 
                     "</td>"
     })
     return output
 }
 
-function formatYearlyOutput(arr) {
+function formatYearlyOutput(arr, currency) {
     var output = 
     "<table>" +
       "<tr>" +
@@ -159,14 +161,16 @@ function formatYearlyOutput(arr) {
   
       if (!isNaN(Number(data.profit))) yearlyProfit = yearlyProfit + Number(data.profit)
 
+      var onePipInGBP = com.getOnePipValueGbp(currency)
+
       output = output + 
         "<tr>" +
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + COUNTER  + "</td>" + 
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.date + "</td>" + 
           "<td style='background-color:" + color + ";white-space:nowrap;'>" + data.direction + "</td>" +
-          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(data.profit) + "</td>" +
-          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(yearlyProfit) + "</td>" +
-          "<td style='background-color:" + color + ";white-space:nowrap;'>" + com.pipsToFixed(data.acc) +  "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + (com.convertToPips(data.profit, currency) * onePipInGBP).toFixed(2) + "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + (com.convertToPips(yearlyProfit, currency) * onePipInGBP).toFixed(2) + "</td>" +
+          "<td style='background-color:" + color + ";white-space:nowrap;'>" + (com.convertToPips(data.acc, currency) * onePipInGBP).toFixed(2) +  "</td>" +
         "</tr>"
   
         COUNTER = COUNTER + 1
@@ -179,19 +183,22 @@ function formatYearlyOutput(arr) {
 
 /* every day */ 
 function formatDay(days, currency) {
-    var output = "<table><tr><th colspan=7>" + currency + "</th></tr>" +
-                    "<th>Nr</th><th>Date</th><th>Time</th><th>Close</th><th>Direction</th><th>Profit</th><th>Test</th><th>Cash</th>"
+    var pipValue = com.getOnePipValueGbp(currency)
+
+    var output = "<table><tr><th colspan=7>" + com.createTitle(currency) + "</th></tr>" +
+                    "<th>Nr</th><th>Date</th><th>Time</th><th>Close</th><th>Direction</th><th>Test</th><th>Pips</th><th>GBP</th>"
     var counter = 1
     days.forEach( day => {
+        var earnedPips = com.convertToPips(day.profit, currency)
         output = output + "<tr>" +
         "<td><strong>" + counter + "</strong></td>" + 
         "<td>" + day.date + "</td>" +
         "<td>" + day.time + "</td>" +
-        "<td><strong>" + com.roundToFixed(day.close) + "</strong></td>" +
+        "<td><strong>" + day.close + "</strong></td>" +
         "<td>" + day.direction + "</td>" +
-        "<td><strong>" + com.roundToFixed(day.profit) + "</strong></td>" +
         "<td>" + day.test + "</td>" +
-        "<td><strong>" + com.pipsToFixed(day.profit) + "</strong></td>" +
+        "<td><strong>" + (earnedPips).toFixed() + "</strong></td>" +
+        "<td><strong>" + (earnedPips * pipValue).toFixed(2) + "</strong></td>" +
         "</tr>"
         counter = counter + 1
     })
@@ -212,15 +219,15 @@ module.exports = { readFiles: async function () {
 
         switch (conf.read.switch) {
             case 1:
-                var name = com.getCurrencyById(conf.read.everyDayCurrency).name
+                var currency = com.getCurrencyById(conf.read.everyDayCurrency)
                 var filteredIndex = currencies.findIndex(val => val.id == conf.read.everyDayCurrency)
-                var output = formatDay(data.map(val => val.days)[filteredIndex], name)
+                var output = formatDay(data.map(val => val.days)[filteredIndex], currency)
             break
             case 2:
                 var output = formatMultipleFileTable(data.map(val => val.sums), currencies)
             break
             case 3: 
-                com.saveJson(transfearDaysArr(data.map(val => val.days)))
+                com.saveJson(transfearDaysArr(data.map(val => val.days), currencies))
                 var output = "OK"
             break
         }

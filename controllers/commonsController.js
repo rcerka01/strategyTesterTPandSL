@@ -15,12 +15,21 @@ function dateToMonth(date) {
     return date.split("/")[0].substring(1)
 }
 
-function pipsToFixed(val) {
-    return Number(val * 10000).toFixed(2)
+function getMarginGbp(currency) {
+    return currency.lot / currency.leverage * currency.value * currency.marginToGBP
 }
 
-function roundToFixed(val) {
-    return Number(val).toFixed(5)
+function convertToPips(val, currency) {
+    return val / currency.pip
+}
+
+function getOnePipValueGbp(currency) {
+    return currency.lot * currency.value * currency.pip * currency.pipToGBP
+}
+
+function createTitle(currency) {
+    return currency.name + "<br> margin: " + getMarginGbp(currency).toFixed(2) + 
+        " pip: "    + currency.pip + " or " + getOnePipValueGbp(currency).toFixed(2) + " gbp"
 }
 
 function loadCurrenciesBoolArray(bool) {
@@ -78,33 +87,50 @@ function findCurrencyIndexById(id) {
 // *** USE IN MULTIPLE CONTROLLERS *** //
 
 // single and combined
-function getProfits(arr, ci, tp, sl) {
+function getProfits(arr, ci, tp, sl, currency, isCombined) {
     var resultsArr = []
 
     var closeFlag = false
+    var inGbp = conf.single.tpSlInGBP
+
+    var onePipValueInGbp = getOnePipValueGbp(currency) 
 
     arr.forEach( (val, i) => {
-
         var profit =  0
 
+        var profitFromArr = convertToPips(val.profits[ci], currency)
+        if (inGbp) { profitFromArr = profitFromArr * onePipValueInGbp }
+
         // sl
-        if (conf.sl && !closeFlag && val.profits[ci] <= sl) { closeFlag = true; profit = val.profits[ci] }
+        if (conf.sl && !closeFlag && profitFromArr <= sl) { closeFlag = true; profit = val.profits[ci] }
 
         // tp
-        if (conf.tp && !closeFlag && val.profits[ci] >= tp) { closeFlag = true; profit = val.profits[ci] }
+        if (conf.tp && !closeFlag && profitFromArr >= tp) { closeFlag = true; profit = val.profits[ci] }
 
         // norm
         if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) profit = val.profits[ci]
         else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) closeFlag = false
 
-        resultsArr.push(
-            {
-                date: val.date, 
-                profitDaily: val.profits[ci], 
-                profit: profit, 
-                direction: val.directions[ci], 
-                close: closeFlag 
-            })
+        // combined returns profit in GBP
+        if (isCombined) {
+            resultsArr.push(
+                {
+                    date: val.date, 
+                    profitDaily: convertToPips(val.profits[ci], currency) * onePipValueInGbp,
+                    profit: convertToPips(profit, currency) * onePipValueInGbp,
+                    direction: val.directions[ci], 
+                    close: closeFlag 
+                })
+        } else {
+            resultsArr.push(
+                {
+                    date: val.date, 
+                    profitDaily: val.profits[ci], 
+                    profit: profit, 
+                    direction: val.directions[ci], 
+                    close: closeFlag 
+                })
+        }
     });  
 
     return resultsArr
@@ -134,10 +160,10 @@ function countAvaregesAndPositives(arr, tp, sl) {
     var avarages = []
     var sums = []
     arr.forEach( val => {
-        sums.push(pipsToFixed(val.sum))
+        sums.push(val.sum)
 
         var av = arrSum(val.profits) / val.profits.length
-        avarages.push(pipsToFixed(av))
+        avarages.push(av)
 
         val.profits.forEach( prof => {
             total = total + 1
@@ -152,63 +178,91 @@ function sortAvaragesAndPositives(arr) {
     return  arr.sort((a,b) => Number(b.positives) - Number(a.positives))
 }
 
-// single and combined
-function outputProfitsByYear(arr, tp, sl) {
+// single
+function outputProfitsByYear(arr, tp, sl, currency) {
     if (tp != undefined) var outputTp = "TP: " + tp + "<br>"; else var outputTp = ""
     if (sl != undefined) var outputSl = "SL: " + sl; else var outputSl = ""
-    var output = "<table style='border: 1px solid black;'>" +
-                    "<tr>"
+
+    var onePipvalue = getOnePipValueGbp(currency)
+
+    var output = createTitle(currency) + "<br>"
+    
+    output = output + "<table style='border: 1px solid black;'>"
+
+    output = output + "<tr>"
     arr.forEach( val => {
         output = output + "<th>" + val.year + "<br>" + outputTp + " " + outputSl + "</th>"
     })
-    output = output + "</tr><tr>"
-    arr.forEach( val => {
+    output = output + "</tr>"
+
+    output = output + "<tr>"
+
+    arr.forEach( (val, i) => {
+
+        var pips0 = convertToPips(val.profits[0], currency)
+        var pips1 = convertToPips(val.profits[1], currency)
+        var pips2 = convertToPips(val.profits[2], currency)
+        var pips3 = convertToPips(val.profits[3], currency)
+        var pips4 = convertToPips(val.profits[4], currency)
+        var pips5 = convertToPips(val.profits[5], currency)
+        var pips6 = convertToPips(val.profits[6], currency)
+        var pips7 = convertToPips(val.profits[7], currency)
+        var pips8 = convertToPips(val.profits[8], currency)
+        var pips9 = convertToPips(val.profits[9], currency)
+        var pips10 = convertToPips(val.profits[10], currency)
+        var pips11 = convertToPips(val.profits[11], currency)
+
         output = output + "<td>" + 
-        "January: " + pipsToFixed(val.profits[0]) + "<br>" +
-        "February: " + pipsToFixed(val.profits[1]) + "<br>" +
-        "March: " + pipsToFixed(val.profits[2]) + "<br>" + 
-        "April: " + pipsToFixed(val.profits[3]) + "<br>" + 
-        "May: " + pipsToFixed(val.profits[4]) + "<br>" + 
-        "June: " + pipsToFixed(val.profits[5]) + "<br>" + 
-        "July: " + pipsToFixed(val.profits[6]) + "<br>" + 
-        "August: " + pipsToFixed(val.profits[7]) + "<br>" + 
-        "September: " + pipsToFixed(val.profits[8]) + "<br>" +
-        "October: " + pipsToFixed(val.profits[9]) + "<br>" +
-        "November: " + pipsToFixed(val.profits[10]) + "<br>" +
-        "December: " + pipsToFixed(val.profits[11]) + "<br>" +
+        "January: " + pips0.toFixed() + " / <strong>" + (pips0 * onePipvalue).toFixed(2) + "</strong><br>" +
+        "February: " + pips1.toFixed() + " / <strong>" + (pips1 * onePipvalue).toFixed(2) + "</strong><br>" +
+        "March: " + pips2.toFixed() + " / <strong>" + (pips2 * onePipvalue).toFixed(2)+ "</strong><br>" + 
+        "April: " + pips3.toFixed() + " / <strong>" + (pips3 * onePipvalue).toFixed(2) + "</strong><br>" + 
+        "May: " + pips4.toFixed() + " / <strong>" + (pips4 * onePipvalue).toFixed(2) + "</strong><br>" + 
+        "June: " + pips5.toFixed() + " / <strong>" + (pips5 * onePipvalue).toFixed(2) + "</strong><br>" + 
+        "July: " + pips6.toFixed() + " / <strong>" + (pips6 * onePipvalue).toFixed(2) + "</strong><br>" + 
+        "August: " + pips7.toFixed() + " / <strong>" + (pips7 * onePipvalue).toFixed(2) + "</strong><br>" + 
+        "September: " + pips8.toFixed() + " / <strong>" + (pips8 * onePipvalue).toFixed(2) + "</strong><br>" +
+        "October: " + pips9.toFixed() + " / <strong>" + (pips9 * onePipvalue).toFixed(2) + "</strong><br>" +
+        "November: " + pips10.toFixed() + " / <strong>" + (pips10 * onePipvalue).toFixed(2) + "</strong><br>" +
+        "December: " + pips11.toFixed() + " / <strong>" + (pips11 * onePipvalue).toFixed(2) + "</strong><br>" +
       "</td>"
     })
+
     output = output + "</tr><tr>"
-    arr.forEach( val => {
-        output = output + "<th>" + pipsToFixed(val.sum) + "</th>"
+
+    arr.forEach( (val, i) => {
+        output = output + "<th>" + (convertToPips(val.sum, currency) * onePipvalue).toFixed(2) + "</th>"
     })
+
     output = output + "</tr>"
 
     return output
 }
 
-// single and combined
-function outputAvaragesAndPositives(arr) {
+// single
+function outputAvaragesAndPositives(arr, currency) {
     var output = "<table>"
-    arr.forEach( val => {
+    arr.forEach( (val, i) => {
+        var onePipvalue = getOnePipValueGbp(currency)
+
         output = output + 
             "<tr>" + 
                 "<td>TP: " + val.tp + "</td>" +
                 "<td>SL: " + val.sl + "</td>" +
                 "<td>" + val.positives + "/" + val.total + "</td>" +
-                "<td><strong>" + val.sums.map(val => " " + val) + "</strong></td>" +
+                "<td><strong>" + val.sums.map(val => " " + (convertToPips(val, currency) * onePipvalue).toFixed(2)) + "</strong></td>" +
             "</tr>" + 
             "<tr>" + 
                 "<td></td>" +
                 "<td></td>" +
-                "<td style='color:red;'>" + arrSum(val.sums).toFixed(2)  + "</td>" +
-                "<td>" + val.avarages.map(val => " " + val)  + "</td>" +
+                "<td style='color:red;'>" + (convertToPips(arrSum(val.sums), currency) * onePipvalue).toFixed(2)  + "</td>" +
+                "<td>" + val.avarages.map(val => " " + (convertToPips(val, currency) * onePipvalue).toFixed(2))  + "</td>" +
             "</tr>" +
             "<tr>" + 
                 "<td></td>" +
                 "<td></td>" +
                 "<td></td>" +
-                "<td>" + val.sums.sort( (a,b) => Number(a) - Number(b)).map(val => " " + val)  + "</td>" +
+                "<td>" + val.sums.sort((a,b) => Number(a) - Number(b)).map(val => " " + (convertToPips(val, currency) * onePipvalue).toFixed(2))  + "</td>" +
 
             "</tr>" 
     })
@@ -221,8 +275,10 @@ module.exports = {
     arrSum,
     dateToYear,
     dateToMonth,
-    pipsToFixed,
-    roundToFixed,
+    getMarginGbp,
+    convertToPips,
+    getOnePipValueGbp,
+    createTitle,
     loadCurrenciesBoolArray,
     convertDateFromUnixTimestamp,
     convertTimeFromUnixTimestamp,
