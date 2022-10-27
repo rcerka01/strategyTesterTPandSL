@@ -15,7 +15,7 @@ module.exports = {
     },
     year: {
         from: 2012,
-        to: 2022
+        to: 2012
     },
     closingHour: 22,
     mapper: [
@@ -197,7 +197,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.CHF,
             pipToGBP: toGBP.HUF,
-            enabled: true
+            enabled: false
         },
         {
             id: 29,
@@ -219,7 +219,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.EUR,
             pipToGBP: toGBP.CZK,
-            enabled: true
+            enabled: false
         },
         {
             id: 31,
@@ -252,7 +252,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.EUR,
             pipToGBP: toGBP.PLN,
-            enabled: false
+            enabled: true
         },
         {
             id: 34,
@@ -345,8 +345,9 @@ module.exports = {
         },
     ],
 
-    tp: true,
-    sl: true,
+    // alwais false for combined !!!
+    tp: false,
+    sl: false,
     
     // Directly from TV files
     // 1 - every day
@@ -354,16 +355,16 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 3,
-        everyDayCurrency: 29
+        everyDayCurrency: 31
     },
 
     // From data.json
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
     single: {
-        switch: 2,
+        switch: 1,
 
-        currencyId: 29,
+        currencyId: 33,
 
         tpSlInGBP: true,
 
@@ -386,19 +387,19 @@ module.exports = {
     // 1 - single tp
     // 2 - multiple tp
     combined: {
-        switch: 2,
+        switch: 1,
 
-        tp: 500,
-        sl: -50,
+        tp: 100,
+        sl: -100,
 
         multipleTP: {
             start: 0,
-            stop: 400,
+            stop: 200,
             step: 20
         },
 
         multipleSL: {
-            start: -40,
+            start: -200,
             stop: 0,
             step: 20
         }

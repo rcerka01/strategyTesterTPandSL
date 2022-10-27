@@ -63,21 +63,28 @@ function createOutputItem(val, closes, commonProfit) {
 
 function takeProfit(arr, tp, sl) {
     var results = []
-    var closes = com.loadCurrenciesBoolArray(false)
+    var closes = com.loadCurrenciesBoolArray(true)
 
-    arr.forEach( val => {
+    arr.forEach( (val, index) => {
         var profits = []
+        var tpSlDoneFlag = false
 
         if (isOpensGreaterTp(closes, val.dailies, tp) || isOpensSmallerSl(closes, val.dailies, sl)) {
             closes.forEach( (close, i) => {
-                if (!close) { closes[i] = true; profits.push(val.dailies[i]) }
+                if (!close) { 
+                    closes[i] = true; 
+                    profits.push(val.dailies[i])
+                    tpSlDoneFlag = true
+                }
             })
         } 
-
+        
         closes.forEach( (close, i) => {
-            if (val.profits[i] != 0) { 
+            if (arr[index + 1] !== void 0 && val.directions[i] !== arr[index + 1].directions[i]) { 
                 if (close) closes[i] = false
-                else profits.push(val.profits[i]) 
+                else {
+                    if (!tpSlDoneFlag) profits.push(val.profits[i])
+                } 
             }
         })
 
@@ -97,20 +104,14 @@ function formTableArrHead(currencies) {
     return output
 }
 
-function formTableArrCells(arr, colors, closes) {
+function formTableArrCells(arr, colors) {
     var output = ""
-    var strongOpen = ""
-    var strongClose = ""
+
     arr.forEach( (val, i) => {
-        if (typeof val == "boolean" && val) {
-            output = output + "<td style='color:black;'>" + val + "</td>"
-        }
-        else {
-            if (closes !== void 0 &&!closes[i]) { strongOpen = "<strong>"; strongClose = "</strong>" }
-            else { strongOpen = ""; strongClose = "" }  
-            output = output + "<td style='color:" + colors[i] + ";'>" + strongOpen + val + strongClose + "</td>"
-        }
+        if (typeof val == "boolean" && val)  output = output + "<td style='color:black;'>" + val + "</td>"
+        else output = output + "<td style='color:" + colors[i] + ";'>" + val + "</td>"
     })
+
     return output
 } 
 
@@ -140,7 +141,7 @@ function outputResult(arr) {
         output = output 
             + "<tr>"
             + "<td>" + val.date + "</td>"
-            + formTableArrCells(val.dailies.map(val => Number(val).toFixed(2)), val.directions, val.closes)
+            + formTableArrCells(val.dailies.map(val => Number(val).toFixed(2)), val.directions)
             + "<td><strong>" + val.sum.toFixed(2) + "</strong></td>"
             + formTableArrCells(val.profits.map(val => Number(val).toFixed(2)), val.directions)
             + "<td><strong>" + val.profit.toFixed(2) + "</strong></td>"
