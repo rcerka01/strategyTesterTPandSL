@@ -201,14 +201,13 @@ function outputAvaragesAndPositivesCombined(arr) {
                 "<td></td>" +
                 "<td></td>" +
                 "<td style='color:red;'>" + com.arrSum(val.sums).toFixed(2)  + "</td>" +
-                "<td>" + val.avarages.map(val => " " + val.toFixed(2))  + "</td>" +
+                "<td>" + val.sums.sort((a,b) => Number(a) - Number(b)).map(val => " " + val.toFixed(2))  + "</td>" +
             "</tr>" +
             "<tr>" + 
                 "<td></td>" +
                 "<td></td>" +
                 "<td></td>" +
-                "<td>" + val.sums.sort((a,b) => Number(a) - Number(b)).map(val => " " + val.toFixed(2))  + "</td>" +
-
+                "<td>" + val.monthlyProfits.sort((a,b) => a - b).map(val => val.toFixed(2))  + "</td>" +
             "</tr>" 
     })
     output = output + "</table>"
