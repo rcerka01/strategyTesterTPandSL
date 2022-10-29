@@ -13,8 +13,8 @@ module.exports = {
     mapper: currencies.mapper,
 
     // ALLWAYS FALSE FOR COMBINED !!!
-    tp: true,
-    sl: true,
+    tp: false,
+    sl: false,
     
     // Directly from TV files
     // 1 - every day
@@ -31,7 +31,7 @@ module.exports = {
     single: {
         switch: 2,
 
-        currencyId: 49,
+        currencyId: 54,
 
         tpSlInGBP: true,
 
@@ -61,14 +61,14 @@ module.exports = {
 
         multipleTP: {
             start: 0,
-            stop: 200,
-            step: 20
+            stop: 600,
+            step: 50
         },
 
         multipleSL: {
-            start: -200,
+            start: -300,
             stop: 0,
-            step: 20
+            step: 50
         }
     }
 }

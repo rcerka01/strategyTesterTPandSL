@@ -110,7 +110,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.EUR,
             pipToGBP: 1,
-            enabled: true
+            enabled: false
         },
         { //9
             id: 9,
@@ -121,7 +121,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: 1,
             pipToGBP: toGBP.CHF,
-            enabled: true
+            enabled: false
         },
         { //10
             id: 48,
@@ -132,7 +132,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.EUR,
             pipToGBP: toGBP.JPY,
-            enabled: true
+            enabled: false
         },
         { //11
             id: 49,
@@ -143,7 +143,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: 1,
             pipToGBP: toGBP.JPY,
-            enabled: true
+            enabled: false
         },
         { //12
             id: 50,
@@ -154,7 +154,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.USD,
             pipToGBP: toGBP.JPY,
-            enabled: true
+            enabled: false
         },
 
         // MINOR

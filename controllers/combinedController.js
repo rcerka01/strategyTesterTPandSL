@@ -188,7 +188,11 @@ function outputProfitsByYearCombined(arr, tp, sl) {
 }
 
 function outputAvaragesAndPositivesCombined(arr) {
+    var positives = arr.map(val => val.positives)
+    var maxPositives = Math.max.apply(Math, positives)
+
     var output = "<table>"
+
     arr.forEach( (val, i) => {
         output = output + 
             "<tr>" + 
@@ -198,8 +202,8 @@ function outputAvaragesAndPositivesCombined(arr) {
                 "<td><strong>" + val.sums.map(val => " " + val.toFixed(2)) + "</strong></td>" +
             "</tr>" + 
             "<tr>" + 
-                "<td></td>" +
-                "<td></td>" +
+               "<td>max: " + maxPositives + " / </td>" +
+                "<td>" + (val.positives / val.total * 100).toFixed() + "%</td>" +
                 "<td style='color:red;'>" + com.arrSum(val.sums).toFixed(2)  + "</td>" +
                 "<td>" + val.sums.sort((a,b) => Number(a) - Number(b)).map(val => " " + val.toFixed(2))  + "</td>" +
             "</tr>" +
