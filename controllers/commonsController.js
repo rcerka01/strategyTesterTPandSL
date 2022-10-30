@@ -196,6 +196,8 @@ function outputProfitsByYear(arr, tp, sl, currency) {
 
     output = output + "<tr>"
 
+    var inlineMonthlyProfits = []
+
     arr.forEach( (val, i) => {
 
         var pips0 = convertToPips(val.profits[0], currency)
@@ -210,6 +212,19 @@ function outputProfitsByYear(arr, tp, sl, currency) {
         var pips9 = convertToPips(val.profits[9], currency)
         var pips10 = convertToPips(val.profits[10], currency)
         var pips11 = convertToPips(val.profits[11], currency)
+
+        inlineMonthlyProfits.push((pips0 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips1 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips2 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips3 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips4 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips5 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips6 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips7 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips8 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips9 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips10 * onePipvalue).toFixed(2))
+        inlineMonthlyProfits.push((pips11 * onePipvalue).toFixed(2))
 
         output = output + "<td>" + 
         "January: " + pips0.toFixed() + " / <strong>" + (pips0 * onePipvalue).toFixed(2) + "</strong><br>" +
@@ -234,6 +249,9 @@ function outputProfitsByYear(arr, tp, sl, currency) {
     })
 
     output = output + "</tr>"
+    output = output + "</table>"
+    output = output + "<br>"
+    output = output + inlineMonthlyProfits
 
     return output
 }
@@ -270,8 +288,13 @@ function outputAvaragesAndPositives(arr, currency) {
                 "<td></td>" +
                 "<td></td>" +
                 "<td></td>" +
+                "<td>" + val.monthlyProfits.map(val => (convertToPips(val, currency) * onePipvalue).toFixed(2))  + "</td>" +
+            "</tr>" +
+                "<tr>" + 
+                "<td></td>" +
+                "<td></td>" +
+                "<td></td>" +
                 "<td>" + val.monthlyProfits.sort((a,b) => a - b).map(val => (convertToPips(val, currency) * onePipvalue).toFixed(2))  + "</td>" +
-
             "</tr>" 
     })
     output = output + "</table>"

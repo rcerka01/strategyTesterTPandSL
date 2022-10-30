@@ -13,8 +13,8 @@ module.exports = {
     mapper: currencies.mapper,
 
     // ALLWAYS FALSE FOR COMBINED !!!
-    tp: false,
-    sl: false,
+    tp: true,
+    sl: true,
     
     // Directly from TV files
     // 1 - every day
@@ -22,7 +22,7 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 3,
-        everyDayCurrency: 29
+        everyDayCurrency: 49
     },
 
     // From data.json
@@ -31,12 +31,13 @@ module.exports = {
     single: {
         switch: 2,
 
-        currencyId: 54,
+        // 4 16 27 28 44 46 47 49
+        currencyId: 4,
 
         tpSlInGBP: true,
 
-        singleTp: 100,
-        singleSl: -100,
+        singleTp: 300,
+        singleSl: -50,
 
         multipleTP: {
             start: 0,

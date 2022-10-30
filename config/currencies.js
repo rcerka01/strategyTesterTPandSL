@@ -65,7 +65,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: 1,
             pipToGBP: toGBP.USD,
-            enabled: false
+            enabled: true
         },
         { //5
             id: 5,
