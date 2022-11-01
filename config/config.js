@@ -29,25 +29,29 @@ module.exports = {
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
     single: {
-        switch: 2,
+        switch: 1,
 
         // 4 16 27 28 44 46 47 49
-        currencyId: 4,
+        currencyId: 49,
 
         tpSlInGBP: true,
 
-        singleTp: 300,
-        singleSl: -50,
+        deductSpread: true,
+        // in GBP
+        spread: 10,
+
+        singleTp: 40,
+        singleSl: -500,
 
         multipleTP: {
             start: 0,
-            stop: 500,
-            step: 50
+            stop: 60,
+            step: 5,
         },
         multipleSL: {
-            start: -400,
-            stop: 0,
-            step: 25
+            start: -500,
+            stop: -300,
+            step: 50
         },
     },
 
@@ -62,12 +66,12 @@ module.exports = {
 
         multipleTP: {
             start: 0,
-            stop: 600,
+            stop: 400,
             step: 50
         },
 
         multipleSL: {
-            start: -300,
+            start: -400,
             stop: 0,
             step: 50
         }

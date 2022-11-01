@@ -47,10 +47,15 @@ module.exports = { run: function (data) {
             var tp = conf.single.singleTp
             var sl = conf.single.singleSl
 
+            var avAndPos = []
+
             var profits = com.getProfits(jsonData, ci, tp, sl, currency)
             var profitsByYear = com.profitsByYearArr(profits)
+            avAndPos.push(com.countAvaregesAndPositives(profitsByYear, tp, sl))
 
-            output = com.outputProfitsByYear(profitsByYear, tp, sl, currency) + outputProfits(profits, currency)
+            output = com.outputAvaragesAndPositives(com.sortAvaragesAndPositives(avAndPos), currency)
+                   +com.outputProfitsByYear(profitsByYear, tp, sl, currency) 
+                   + outputProfits(profits, currency)
         break
 
         case 2:

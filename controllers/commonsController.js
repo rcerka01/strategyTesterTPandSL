@@ -95,20 +95,29 @@ function getProfits(arr, ci, tp, sl, currency, isCombined) {
 
     var onePipValueInGbp = getOnePipValueGbp(currency) 
 
+    // deduct spread
+    if (conf.single.deductSpread)  {
+        var spreadToDeductInGbp = conf.single.spread
+        var spreadToDeductInPip = conf.single.spread / onePipValueInGbp * currency.pip
+    } else { 
+        var spreadToDeductInGbp = 0
+        var spreadToDeductInPip = 0
+    }
+
     arr.forEach( (val, i) => {
         var profit =  0
 
         var profitFromArr = convertToPips(val.profits[ci], currency)
-        if (inGbp) { profitFromArr = profitFromArr * onePipValueInGbp }
+        if (inGbp) { profitFromArr = profitFromArr * onePipValueInGbp - spreadToDeductInGbp }
 
         // sl
-        if (conf.sl && !closeFlag && profitFromArr <= sl) { closeFlag = true; profit = val.profits[ci] }
+        if (conf.sl && !closeFlag && profitFromArr <= sl) { closeFlag = true; profit = val.profits[ci] - spreadToDeductInPip }
 
         // tp
-        if (conf.tp && !closeFlag && profitFromArr >= tp) { closeFlag = true; profit = val.profits[ci] }
+        if (conf.tp && !closeFlag && profitFromArr >= tp) { closeFlag = true; profit = val.profits[ci] - spreadToDeductInPip }
 
         // norm
-        if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) profit = val.profits[ci]
+        if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) profit = val.profits[ci] - spreadToDeductInPip
         else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) closeFlag = false
 
         // combined returns profit in GBP
