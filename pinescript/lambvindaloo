@@ -1,5 +1,5 @@
 //@version=4
-study("HMA-Kahlman Trend & Trendlines", precision=2, overlay=true)
+study("Lamb Vindaloo HMA-Kahlman Trend & Trendlines", precision=2, overlay=true)
 // compilation: capissimo
 
 // This script utilizes two modules, Trendlines Module (by Joris Duyck) and HMA-Kahlman Trend Module. 

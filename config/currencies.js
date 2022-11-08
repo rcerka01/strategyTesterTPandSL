@@ -143,7 +143,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: 1,
             pipToGBP: toGBP.JPY,
-            enabled: true
+            enabled: false
         },
         { //12
             id: 50,
@@ -376,7 +376,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.NZD,
             pipToGBP: toGBP.JPY,
-            enabled: false
+            enabled: true
         },
 
         // EMERGING

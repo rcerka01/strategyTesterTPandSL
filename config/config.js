@@ -22,7 +22,7 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 3,
-        everyDayCurrency: 49
+        everyDayCurrency: 1
     },
 
     // From data.json
@@ -31,28 +31,37 @@ module.exports = {
     single: {
         switch: 1,
 
-        // 4 16 27 28 44 46 47 49
-        currencyId: 49,
+        currencyId: 53,
 
         tpSlInGBP: true,
 
-        deductSpread: true,
+        deductSpread: false,
         // in GBP
-        spread: 10,
+        spread: 5,
 
-        singleTp: 40,
-        singleSl: -500,
+        singleTp: 27,
+        singleSl: -320,
 
         multipleTP: {
             start: 0,
-            stop: 60,
-            step: 5,
+            stop: 120,
+            step: 20,
         },
         multipleSL: {
             start: -500,
-            stop: -300,
+            stop: 0,
             step: 50
         },
+        // multipleTP: {
+        //     start: 0,
+        //     stop: 40,
+        //     step: 2,
+        // },
+        // multipleSL: {
+        //     start: -400,
+        //     stop: -100,
+        //     step: 20
+        // },
     },
 
     // From data.json
@@ -65,15 +74,15 @@ module.exports = {
         sl: -100,
 
         multipleTP: {
-            start: 0,
-            stop: 400,
-            step: 50
+            start: 10,
+            stop: 50,
+            step: 20
         },
 
         multipleSL: {
-            start: -400,
-            stop: 0,
-            step: 50
+            start: -320,
+            stop: -120,
+            step: 20
         }
     }
 }
