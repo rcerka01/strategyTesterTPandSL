@@ -376,7 +376,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.NZD,
             pipToGBP: toGBP.JPY,
-            enabled: true
+            enabled: false
         },
 
         // EMERGING

@@ -32,11 +32,12 @@ margin 213
 CADCHF 13 S 30 2.33k 22 1.218 12.1k 80% 0.87 TP36(41) SL-440(506)  http://trade.raitis.co.uk/1/506/0/41/sell/CADCHF/0.1
 AUDUSD 6  M 20 0.3k  21 1.23  15.7k 84% 0.86 TP23(27) SL-320(372)  http://trade.raitis.co.uk/1/372/0/27/sell/AUDUSD/0.1
 
+
+
+eur
+
 DROPPED OUT
 GBPZAR 39 E 20 5.2K 
-
-
-
 
 MA
 -GBPJPY 11K TP300 SL-50 49

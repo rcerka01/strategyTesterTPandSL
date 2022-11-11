@@ -16,19 +16,21 @@ function formLines(dataArray) {
     var sums = []
     var days = []
 
-    function addItem(date, time, prevProf, currentProf, isIncrAcc) {
+    function addItem(date, time, prevProf, currentProf, isIncrAcc, min, max, signal) {
         if (com.dateToYear(date) >= conf.year.from && com.dateToYear(date) <= conf.year.to) {
             if (direction == "red") {
                 var profit = prevProf - currentProf
-                var test = prevProf + " - " + currentProf
+                var maxProfit = prevProf - min
+                var test = prevProf + " - " + currentProf + " : " + prevProf + " - " + min
                 if (isIncrAcc) acc = acc + profit
             }
             else if (direction == "green") {
                 var profit = currentProf - prevProf
-                var test = currentProf + " - " + prevProf
+                var maxProfit = max - prevProf
+                var test = currentProf + " - " + prevProf + " : " + max + " - " + prevProf
                 if (isIncrAcc) acc = acc + profit
             }
-            return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test }
+            return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test, maxProfit, signal }
         }
     }
 
@@ -37,11 +39,18 @@ function formLines(dataArray) {
         var ts = Number(lineArr[0]) + 86400 // todo Reemove when day lagging issue resolved
         var sh1 = lineArr[7]
         var sh2 = lineArr[8]
+        var min = lineArr[3]
+        var max = lineArr[2]
         var convertedDate = com.convertDateFromUnixTimestamp(ts)
         var convertedTime = com.convertTimeFromUnixTimestamp(ts)
+        var signal = ""
 
         if (com.dateToYear(convertedDate) >= conf.year.from && com.dateToYear(convertedDate) <= conf.year.to) {
-            days.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], false))
+
+            if (sh1 != "NaN") { signal = "red"; }
+            if (sh2 != "NaN") { signal = "green"; }
+
+            days.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], false, min, max, signal))
 
             if (sh1 != "NaN") {
                 sums.push(addItem(convertedDate, convertedTime, startValue, lineArr[4], true))
@@ -54,6 +63,7 @@ function formLines(dataArray) {
                 direction = "green";
                 startValue = lineArr[4]
             }
+
         } 
     })
     return { sums: sums, days: days }
@@ -77,14 +87,17 @@ function transfearDaysArr(daysArr) {
     var from = new Date(conf.year.from, 0, 1, conf.closingHour);
     var to = new Date(conf.year.to, 11, 31, conf.closingHour);  
 
-    prevCloses = []
-    prevProfits = []
-    prevDirections = []
+    var prevCloses = []
+    var prevProfits = []
+    var prevDirections = []
+    var prevMaxProfits = []
 
     for (var day = from; day <= to; day.setDate(day.getDate() + 1)) {
         var profits = []
         var closes = []
         var directions = []
+        var maxProfits = []
+        var signals = []
 
         var convertedDate = com.convertDateFromTimestamp(day)
         var convertedTime = com.convertTimeFromTimestamp(day)
@@ -101,10 +114,18 @@ function transfearDaysArr(daysArr) {
 
                 if (val.direction !== void 0) { directions.push(val.direction); prevDirections[i] = val.direction }
                 else directions.push(prevDirections[i])
+
+                if (val.maxProfit !== void 0) { maxProfits.push(val.maxProfit); prevMaxProfits[i] = val.maxProfit }
+                else maxProfits.push(prevMaxProfits[i])
+
+                if (val.signal !== void 0) { signals.push(val.signal); }
+                else signals.push("")
             } else {
                 closes.push(prevCloses[i])
                 profits.push(prevProfits[i])
                 directions.push(prevDirections[i])
+                maxProfits.push(prevMaxProfits[i])
+                signals.push("")
             }
         }
 
@@ -113,7 +134,9 @@ function transfearDaysArr(daysArr) {
             time: convertedTime,
             closes: closes,
             profits: profits,
-            directions: directions
+            directions: directions,
+            maxProfits,
+            signals
         })
     }  
     return result

@@ -85,6 +85,46 @@ function findCurrencyIndexById(id) {
 }
 
 // *** USE IN MULTIPLE CONTROLLERS *** //
+// use native tp and sl
+function getProfits2(arr, ci, tp, sl, currency) {
+    var resultsArr = []
+
+    var closeFlag = false
+    var midCloseFlag = true
+    var onePipValueInGbp = getOnePipValueGbp(currency) 
+
+    arr.forEach( (val, i) => {
+        var profit =  0
+
+        var tpInPips = tp / onePipValueInGbp * currency.pip
+        var slInPips = sl / onePipValueInGbp * currency.pip
+
+        // sl
+        if (conf.sl && !closeFlag && val.maxProfits[ci] <= slInPips) { closeFlag = true; profit = val.profits[ci] } 
+        // tp
+        if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips; } 
+        if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips }
+        // norm
+        if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) { profit = val.profits[ci] }
+        else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) { closeFlag = false; }
+
+        if (val.signals[ci] !== null && val.signals[ci].length > 0) { midCloseFlag = false; }
+
+        resultsArr.push(
+            {
+                date: val.date, 
+                profitDaily: val.profits[ci],
+                profitMax: val.maxProfits[ci],
+                profit: profit, 
+                direction: val.directions[ci],
+                signal: val.signals[ci], 
+                close: closeFlag
+            })
+        
+    });  
+
+    return resultsArr
+}
 
 // single and combined
 function getProfits(arr, ci, tp, sl, currency, isCombined) {
@@ -134,9 +174,11 @@ function getProfits(arr, ci, tp, sl, currency, isCombined) {
             resultsArr.push(
                 {
                     date: val.date, 
-                    profitDaily: val.profits[ci], 
+                    profitDaily: val.profits[ci],
+                    profitMax: val.maxProfits[ci],
                     profit: profit, 
-                    direction: val.directions[ci], 
+                    direction: val.directions[ci],
+                    signal: val.signals[ci], 
                     close: closeFlag 
                 })
         }
@@ -332,6 +374,7 @@ module.exports = {
 
     // common
     getProfits,
+    getProfits2,
     profitsByYearArr,
     countAvaregesAndPositives,
     sortAvaragesAndPositives,
