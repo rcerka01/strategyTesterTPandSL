@@ -21,7 +21,7 @@ module.exports = {
     // 2 - by year
     // 3 - read intermediate file
     read: {
-        switch: 1,
+        switch: 3,
         everyDayCurrency: 4
     },
 
@@ -29,9 +29,9 @@ module.exports = {
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
     single: {
-        switch: 3,
+        switch: 4,
 
-        currencyId: 4,
+        currencyId: 3,
 
         tpSlInGBP: true,
 
@@ -39,7 +39,7 @@ module.exports = {
         // in GBP
         spread: 5,
 
-        singleTp: 70,
+        singleTp: 50,
         singleSl: -400,
 
         multipleTP: {
@@ -53,13 +53,13 @@ module.exports = {
             step: 50
         },
         // multipleTP: {
-        //     start: 0,
-        //     stop: 40,
+        //     start: 30,
+        //     stop: 80,
         //     step: 2,
         // },
         // multipleSL: {
-        //     start: -400,
-        //     stop: -100,
+        //     start: -500,
+        //     stop: -200,
         //     step: 20
         // },
     },
