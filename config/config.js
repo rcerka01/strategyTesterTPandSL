@@ -4,11 +4,16 @@ module.exports = {
     app: {
         port: 3000
     },
+
     year: {
         from: 2012,
         to: 2022
     },
+
     closingHour: 22,
+
+    // 1D 4H 1H
+    timeGap: "1D",
 
     mapper: currencies.mapper,
 
@@ -28,10 +33,12 @@ module.exports = {
     // From data.json
     // 1 - single TP and SL and every day output
     // 2 - multiple TP and SL combinations
+    // 3 - single TP and SL and every day output, ordinary tp and sl (takeProfits2())
+    // 4 - multiple TP and SL combinations, ordinary tp and sl (takeProfits2())
     single: {
-        switch: 4,
+        switch: 1,
 
-        currencyId: 3,
+        currencyId: 4,
 
         tpSlInGBP: true,
 
@@ -39,7 +46,7 @@ module.exports = {
         // in GBP
         spread: 5,
 
-        singleTp: 50,
+        singleTp: 45,
         singleSl: -400,
 
         multipleTP: {
@@ -53,13 +60,13 @@ module.exports = {
             step: 50
         },
         // multipleTP: {
-        //     start: 30,
-        //     stop: 80,
+        //     start: 0,
+        //     stop: 50,
         //     step: 2,
         // },
         // multipleSL: {
         //     start: -500,
-        //     stop: -200,
+        //     stop: 0,
         //     step: 20
         // },
     },

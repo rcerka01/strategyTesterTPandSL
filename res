@@ -22,7 +22,7 @@ EURZAR 36 E 20 3.3K  25 1.27  26k   83% 0.05 TP50(1000) SL-400(8000)  http://tra
 EURTRY 35 E 20 3.6K           10k                                     not added   
 
 margin 333
-GBPUSD 4  M 30 4.5k  20 1.22  26k   86% 0.86 TP45(53) SL-400(465)  http://trade.raitis.co.uk/1/0/0/0/sell/GBPUSD/0.1                   3187.68, 3269.63, 4021.19
+GBPUSD 4  M 30 4.5k  20 1.22  26k   86% 0.86 TP45(53) SL-400(465)  http://trade.raitis.co.uk/1/0/0/0/sell/GBPUSD/0.1          -365.76, 4021.19, 1749.93, 2401.38
 GBPCHF 9  M 30 2.7k  21 1.239 21.3k 79% 0.87 TP28(33) SL-400(460)  http://trade.raitis.co.uk/1/460/0/33/sell/GBPCHF/0.1                1748.27, 874.00,  1479.52
 GBPJPY 49 M 30 11.5k 22 1.22  24k   82% 0.59 TP40(68) SL-500(847)  http://trade.raitis.co.uk/1/84700/0/6800/sell/GBPJPY/0.1   -350.70, 2331.80, 1923.93, 2274.75
 GBPCAD 20 S 30 1.9k  21 1.239 20k   79% 0.64 TP20(31) SL-300(470)  http://trade.raitis.co.uk/1/470/0/31/sell/GBPCAD/0.1       -391.87, 2226.75, 2376.77, 3159.49
@@ -69,6 +69,53 @@ CADCHF 16.7k 86% TP46 SL -260 http://trade.raitis.co.uk/2/299/0/53/sell/CADCHF/0
 AUDUSD 22.2k 89% TP46 SL -220 http://trade.raitis.co.uk/2/256/0/53/sell/AUDUSD/0.1      -221.29, 2364.90, 1488.23, 1829.82
 
 
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDCHF/0.1  
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDJPY/0.1    
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDCAD/0.1     
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDZAR/0.1  
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDSEK/0.1   
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDPLN/0.1   
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDNOK/0.1  
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/USDHUF/0.1  
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURUSD/0.1      	
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURCHF/0.1     
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURGBP/0.1   	
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURJPY/0.1    
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURCAD/0.1     
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURNOK/0.1        
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/EURZAR/0.1   
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/GBPUSD/0.1             
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/GBPCHF/0.1              
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/GBPJPY/0.1 
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/GBPCAD/0.1   
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/CHFJPY/0.1    	
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/NZDJPY/0.1     
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/CADCHF/0.1    
+curl -X POST http://trade.raitis.co.uk/1/0/0/0/sell/AUDUSD/0.1    
+
+curl -X POST http://trade.raitis.co.uk/2/253/0/44/sell/USDCHF/0.1  
+curl -X POST http://trade.raitis.co.uk/2/373/0/51/sell/USDJPY/0.1    
+curl -X POST http://trade.raitis.co.uk/2/344/0/47/sell/USDCAD/0.1     
+curl -X POST http://trade.raitis.co.uk/2/5600/0/1600/sell/USDZAR/0.1  
+curl -X POST http://trade.raitis.co.uk/2/2750/0/575/sell/USDSEK/0.1   
+curl -X POST http://trade.raitis.co.uk/2/1222/0/178/sell/USDPLN/0.1   
+curl -X POST http://trade.raitis.co.uk/2/2750/0/750/sell/USDNOK/0.1  
+curl -X POST http://trade.raitis.co.uk/2/1048/0/209/sell/USDHUF/0.1  
+curl -X POST http://trade.raitis.co.uk/2/290/0/58/sell/EURUSD/0.1      	
+curl -X POST http://trade.raitis.co.uk/2/115/0/30/sell/EURCHF/0.1     
+curl -X POST http://trade.raitis.co.uk/2/300/0/40/sell/EURGBP/0.1   	
+curl -X POST http://trade.raitis.co.uk/2/424/0/58/sell/EURJPY/0.1    
+curl -X POST http://trade.raitis.co.uk/2/344/0/60/sell/EURCAD/0.1     
+curl -X POST http://trade.raitis.co.uk/2/27/0/4/sell/EURNOK/0.1        
+curl -X POST http://trade.raitis.co.uk/2/6000/0/1000/sell/EURZAR/0.1   
+curl -X POST http://trade.raitis.co.uk/2/465/0/80/sell/GBPUSD/0.1             
+curl -X POST http://trade.raitis.co.uk/2/345/0/57/sell/GBPCHF/0.1              
+curl -X POST http://trade.raitis.co.uk/2/59300/0/10800/sell/GBPJPY/0.1 
+curl -X POST http://trade.raitis.co.uk/2/312/0/78/sell/GBPCAD/0.1   
+curl -X POST http://trade.raitis.co.uk/2/678/0/58/sell/CHFJPY/0.1    	
+curl -X POST http://trade.raitis.co.uk/2/339/0/51/sell/NZDJPY/0.1     
+curl -X POST http://trade.raitis.co.uk/2/299/0/53/sell/CADCHF/0.1    
+curl -X POST http://trade.raitis.co.uk/2/256/0/53/sell/AUDUSD/0.1    
 
 DROPPED OUT
 GBPZAR 39 E 20 5.2K 

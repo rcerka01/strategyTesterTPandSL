@@ -34,9 +34,13 @@ function formLines(dataArray) {
         }
     }
 
+    // todo Reemove when day lagging issue resolved
+    if (conf.timeGap == "1D") var lag = 86400
+    else var lag = 0
+
     dataArray.forEach( line => {
         var lineArr = line.split(",")
-        var ts = Number(lineArr[0]) + 86400 // todo Reemove when day lagging issue resolved
+        var ts = Number(lineArr[0]) + lag
         var sh1 = lineArr[7]
         var sh2 = lineArr[8]
         var min = lineArr[3]
@@ -92,7 +96,23 @@ function transfearDaysArr(daysArr) {
     var prevDirections = []
     var prevMaxProfits = []
 
-    for (var day = from; day <= to; day.setDate(day.getDate() + 1)) {
+    var timeGap = com.timeGapMapper(conf.timeGap) 
+
+    var LOOP_TIME_INDEX = 0
+
+    function increaseDay(day) {
+        if ((LOOP_TIME_INDEX + 1) == timeGap) {
+            LOOP_TIME_INDEX = 0
+            var result =  day.setDate(day.getDate() + 1)
+        }
+        else {
+            LOOP_TIME_INDEX = LOOP_TIME_INDEX + 1
+            var result = day
+        }
+        return result
+    }
+
+    for (var day = from; day <= to; increaseDay(day)) {
         var profits = []
         var closes = []
         var directions = []
@@ -103,7 +123,7 @@ function transfearDaysArr(daysArr) {
         var convertedTime = com.convertTimeFromTimestamp(day)
 
         for (var i=0; i<daysArr.length; i++) {
-            var val = daysArr[i].find( item => item.date == convertedDate )
+            var val = daysArr[i].filter(item => item.date == convertedDate)[LOOP_TIME_INDEX]
             
             if (val !== void 0) {
                 if (val.close !== void 0) { closes.push(val.close); prevCloses[i] = val.close }
@@ -129,9 +149,16 @@ function transfearDaysArr(daysArr) {
             }
         }
 
+        function getShortTime(timeGap, fourHindex) {
+            if (timeGap == "1H") return fourHindex
+            if (timeGap == "4H") return (fourHindex + 1) * 4 - 24 + conf.closingHour
+            if (timeGap == "1D") return conf.closingHour
+        }
+
         result.push({
             date: convertedDate,
             time: convertedTime,
+            shotrTime: getShortTime(conf.timeGap, LOOP_TIME_INDEX) + "h",
             closes: closes,
             profits: profits,
             directions: directions,

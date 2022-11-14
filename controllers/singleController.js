@@ -3,11 +3,11 @@ const conf = require("../config/config");
 
 // *** FROM data.json *** //
 
-/* OUTPUTT */
+/* OUTPUT */
 
 function outputProfits(arr, currency) {
-    var output = "<table><tr><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th></tr>" +
-        "<th>Signal</th>"
+    var output = "<table><tr><th></th><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th>" +
+        "<th>Signal</th></tr>"
     arr.forEach( (element, i) => {
         if (!element.close) var color = element.direction 
         else var color= "black"
@@ -26,6 +26,7 @@ function outputProfits(arr, currency) {
         output = output + "<tr>" +
         "<td>" + i + "</td>" +
         "<td>" + element.date + "</td>" +
+        "<td>" + element.shotrTime + "</td>" +
         "<td><span style='color:" + element.direction + ";font-weight:bold;'>" + dailyProfitInPips.toFixed() + "</span></td>" +
         "<td><span style='color:" + element.direction + ";'>" + dailyMaxProfitInPips.toFixed() + "</span></td>" +
         "<td><span style='color:" + element.direction + ";font-weight:bold;'>" + dailyProfitInGBP.toFixed(2) + "</span></td>" +

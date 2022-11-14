@@ -84,6 +84,12 @@ function findCurrencyIndexById(id) {
     return getEnabledCurrencies().findIndex(val => val.id == id)
 }
 
+function timeGapMapper(timeGap) {
+    if (timeGap == "1D") return 1
+    if (timeGap == "4H") return 6
+    if (timeGap == "1H") return 24
+}
+
 // *** USE IN MULTIPLE CONTROLLERS *** //
 // use native tp and sl
 function getProfits2(arr, ci, tp, sl, currency) {
@@ -108,11 +114,12 @@ function getProfits2(arr, ci, tp, sl, currency) {
         if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) { profit = val.profits[ci] }
         else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) { closeFlag = false; }
 
-        if (val.signals[ci] !== null && val.signals[ci].length > 0) { midCloseFlag = false; }
+        if (val.signals[ci] !== null && val.signals[ci] !== void 0 && val.signals[ci].length > 0) { midCloseFlag = false; }
 
         resultsArr.push(
             {
                 date: val.date, 
+                shotrTime: val.shotrTime,
                 profitDaily: val.profits[ci],
                 profitMax: val.maxProfits[ci],
                 profit: profit, 
@@ -174,6 +181,7 @@ function getProfits(arr, ci, tp, sl, currency, isCombined) {
             resultsArr.push(
                 {
                     date: val.date, 
+                    shotrTime: val.shotrTime,
                     profitDaily: val.profits[ci],
                     profitMax: val.maxProfits[ci],
                     profit: profit, 
@@ -371,6 +379,7 @@ module.exports = {
     getCurrencyById,
     getEnabledCurrencies,
     findCurrencyIndexById,
+    timeGapMapper,
 
     // common
     getProfits,
