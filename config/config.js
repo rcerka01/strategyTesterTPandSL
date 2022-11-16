@@ -6,14 +6,14 @@ module.exports = {
     },
 
     year: {
-        from: 2021,
+        from: 2012,
         to: 2022
     },
 
     closingHour: 22,
 
     // 1D 4H 1H
-    timeGap: "1H",
+    timeGap: "1D",
 
     mapper: currencies.mapper,
 
@@ -27,7 +27,7 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 3,
-        everyDayCurrency: 4
+        everyDayCurrency: 49
     },
 
     // From data.json
@@ -38,7 +38,7 @@ module.exports = {
     single: {
         switch: 4,
 
-        currencyId: 4,
+        currencyId: 1,
 
         tpSlInGBP: true,
 
@@ -55,18 +55,18 @@ module.exports = {
         //     step: 10,
         // },
         // multipleSL: {
-        //     start: -500,
-        //     stop: 0,
+        //     start: -600,
+        //     stop: -50,
         //     step: 50
         // },
         multipleTP: {
-            start: 0,
-            stop: 30,
-            step: 1,
+            start: 30,
+            stop: 70,
+            step: 2,
         },
         multipleSL: {
-            start: -300,
-            stop: -10,
+            start: -700,
+            stop: -300,
             step: 10
         },
     },
