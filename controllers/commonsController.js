@@ -106,7 +106,7 @@ function getProfits2(arr, ci, tp, sl, currency) {
         var slInPips = sl / onePipValueInGbp * currency.pip
 
         // sl
-        if (conf.sl && !closeFlag && val.maxProfits[ci] <= slInPips) { closeFlag = true; profit = val.profits[ci] } 
+        if (conf.sl && !closeFlag && val.maxLoses[ci] <= slInPips) { closeFlag = true; profit = slInPips } 
         // tp
         if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips; } 
         if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips }
@@ -122,6 +122,7 @@ function getProfits2(arr, ci, tp, sl, currency) {
                 shotrTime: val.shotrTime,
                 profitDaily: val.profits[ci],
                 profitMax: val.maxProfits[ci],
+                loseMax: val.maxLoses[ci],
                 profit: profit, 
                 direction: val.directions[ci],
                 signal: val.signals[ci], 

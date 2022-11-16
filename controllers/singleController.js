@@ -6,7 +6,7 @@ const conf = require("../config/config");
 /* OUTPUT */
 
 function outputProfits(arr, currency) {
-    var output = "<table><tr><th></th><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th>" +
+    var output = "<table><tr><th></th><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Min PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Min GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th>" +
         "<th>Signal</th></tr>"
     arr.forEach( (element, i) => {
         if (!element.close) var color = element.direction 
@@ -20,6 +20,9 @@ function outputProfits(arr, currency) {
         var dailyMaxProfitInPips = com.convertToPips(element.profitMax, currency)
         var dailyMaxProfitInGBP = dailyMaxProfitInPips * onePip
 
+        var dailyMaxLoseInPips = com.convertToPips(element.loseMax, currency)
+        var dailyMaxLoseInGBP = dailyMaxLoseInPips * onePip
+
         var profitInPips = com.convertToPips(element.profit, currency)
         var profitInGBP = profitInPips * onePip
 
@@ -29,8 +32,10 @@ function outputProfits(arr, currency) {
         "<td>" + element.shotrTime + "</td>" +
         "<td><span style='color:" + element.direction + ";font-weight:bold;'>" + dailyProfitInPips.toFixed() + "</span></td>" +
         "<td><span style='color:" + element.direction + ";'>" + dailyMaxProfitInPips.toFixed() + "</span></td>" +
+        "<td><span style='color:" + element.direction + ";'>" + dailyMaxLoseInPips.toFixed() + "</span></td>" +
         "<td><span style='color:" + element.direction + ";font-weight:bold;'>" + dailyProfitInGBP.toFixed(2) + "</span></td>" +
         "<td><span style='color:" + element.direction + ";'>" + dailyMaxProfitInGBP.toFixed(2) + "</span></td>" +
+        "<td><span style='color:" + element.direction + ";'>" + dailyMaxLoseInGBP.toFixed(2) + "</span></td>" +
         "<td>" + profitInPips.toFixed()  + "</td>" +
         "<td>" + profitInGBP.toFixed(2)  + "</td>" +
         "<td><span style='color:" + color + ";'>" + element.close + "</td>" +

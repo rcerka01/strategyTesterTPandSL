@@ -21,16 +21,22 @@ function formLines(dataArray) {
             if (direction == "red") {
                 var profit = prevProf - currentProf
                 var maxProfit = prevProf - min
-                var test = prevProf + " - " + currentProf + " : " + prevProf + " - " + min
+                var maxLose = prevProf - max
+                var test = prevProf + " - " + currentProf + " : " + 
+                           prevProf + " - " + min + " : " +
+                           prevProf + " - " + max
                 if (isIncrAcc) acc = acc + profit
             }
             else if (direction == "green") {
                 var profit = currentProf - prevProf
                 var maxProfit = max - prevProf
-                var test = currentProf + " - " + prevProf + " : " + max + " - " + prevProf
+                var maxLose = min - prevProf
+                var test = currentProf + " - " + prevProf + " : " + 
+                                   max + " - " + prevProf + " : " +
+                                   min + " - " + prevProf  
                 if (isIncrAcc) acc = acc + profit
             }
-            return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test, maxProfit, signal }
+            return { profit: profit, date: date, time: time, acc: acc, close: currentProf, direction: direction, test: test, maxProfit, maxLose, signal }
         }
     }
 
@@ -95,6 +101,7 @@ function transfearDaysArr(daysArr) {
     var prevProfits = []
     var prevDirections = []
     var prevMaxProfits = []
+    var prevMaxLoses = []
 
     var timeGap = com.timeGapMapper(conf.timeGap) 
 
@@ -117,6 +124,7 @@ function transfearDaysArr(daysArr) {
         var closes = []
         var directions = []
         var maxProfits = []
+        var maxLoses = []
         var signals = []
 
         var convertedDate = com.convertDateFromTimestamp(day)
@@ -138,6 +146,9 @@ function transfearDaysArr(daysArr) {
                 if (val.maxProfit !== void 0) { maxProfits.push(val.maxProfit); prevMaxProfits[i] = val.maxProfit }
                 else maxProfits.push(prevMaxProfits[i])
 
+                if (val.maxLose !== void 0) { maxLoses.push(val.maxLose); prevMaxLoses[i] = val.maxLose }
+                else maxLoses.push(prevMaxLoses[i])
+
                 if (val.signal !== void 0) { signals.push(val.signal); }
                 else signals.push("")
             } else {
@@ -145,6 +156,7 @@ function transfearDaysArr(daysArr) {
                 profits.push(prevProfits[i])
                 directions.push(prevDirections[i])
                 maxProfits.push(prevMaxProfits[i])
+                maxLoses.push(prevMaxLoses[i])
                 signals.push("")
             }
         }
@@ -163,6 +175,7 @@ function transfearDaysArr(daysArr) {
             profits: profits,
             directions: directions,
             maxProfits,
+            maxLoses,
             signals
         })
     }  

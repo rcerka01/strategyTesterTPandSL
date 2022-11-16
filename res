@@ -38,7 +38,7 @@ AUDUSD 6  M 20 0.3k  21 1.23  15.7k 84% 0.86 TP23(27) SL-320(372)  http://trade.
 
 ORDINARY TP AND SL
 
-USDCHF 21.2k 93% TP38 SL -220 http://trade.raitis.co.uk/2/253/0/44/sell/USDCHF/0.1      -299.30, 1830.97, 1727.82, 2261.46
+USDCHF 21.2k 93% TP38 SL -220 http://trade.raitis.co.uk/2/253/0/44/sell/USDCHF/0.1      -299.30, 1830.97, 1727.82, 2261.46 6
 USDJPY 14.4k 85% TP30 SL -220 http://trade.raitis.co.uk/2/373/0/51/sell/USDJPY/0.1      -173.70, 770.88,  736.14,  1241.88
 USDCAD 19.5k 86% TP30 SL -220 http://trade.raitis.co.uk/2/344/0/47/sell/USDCAD/0.1      -147.42, 1894.46, 1099.26, 2162.48
 USDZAR 31.2K 84% TP80 SL -280 http://trade.raitis.co.uk/2/5600/0/1600/sell/USDZAR/0.1   -183.14, 4864.44, 3335.60, 3139.44
@@ -48,20 +48,20 @@ USDPLN 20.8k 93% TP32 SL -220 http://trade.raitis.co.uk/2/1222/0/178/sell/USDPLN
 USDNOK 15.9k 70% TP60 SL -220 http://trade.raitis.co.uk/2/2750/0/750/sell/USDNOK/0.1    -556.44, 3890.55, 1611.95, 3953.27
 USDHUF 19.8k 91% TP44 SL -220 http://trade.raitis.co.uk/2/1048/0/209/sell/USDHUF/0.1    -245.02, 1408.11, 2015.80, 2541.34
 
-EURUSD 23.3k 85% TP50 SL -250 http://trade.raitis.co.uk/2/290/0/58/sell/EURUSD/0.1      -164.26, 1523.66, 1443.80, 2594.64   	
+EURUSD 23.3k 85% TP50 SL -250 http://trade.raitis.co.uk/2/290/0/58/sell/EURUSD/0.1      -164.26, 1523.66, 1443.80, 2594.64 5   	
 EURCHF 10.9k 78% TP20 SL -100 http://trade.raitis.co.uk/2/115/0/30/sell/EURCHF/0.1      -171.42, 864.11,  1309.26, 1189.69 not added
 EURGBP 21.1k 89% TP44 SL -250 http://trade.raitis.co.uk/2/300/0/40/sell/EURGBP/0.1   	-135.10, 2404.90, 1516.60, 1784.50
 EURJPY 15.3k 89% TP34 SL -250 http://trade.raitis.co.uk/2/424/0/58/sell/EURJPY/0.1      -128.98, 1546.84, 1706.11, 1711.59
 
 EURCAD 22.5k 86% TP38 SL -220 http://trade.raitis.co.uk/2/344/0/60/sell/EURCAD/0.1     	-195.28, 1688.34, 1054.94, 1991.78
-EURNOK 13.2k 70% TP34 SL -220 http://trade.raitis.co.uk/2/27/0/4/sell/EURNOK/0.1        -350.56, 3258.84, 1438.91, 1731.33
+EURNOK 13.2k 70% TP34 SL -220 http://trade.raitis.co.uk/2/2700/0/400/sell/EURNOK/0.1    -350.56, 3258.84, 1438.91, 1731.33
 EURZAR 36.3k 95% TP50 SL -300 http://trade.raitis.co.uk/2/6000/0/1000/sell/EURZAR/0.1   -115.41, 3517.81, 3831.35, 3696.37 only six month negative in 10 y 
 EURTRY not added   
 
-GBPUSD 35k   89% TP68 SL -400 http://trade.raitis.co.uk/2/465/0/80/sell/GBPUSD/0.1               4865.85, 3078.98, 3408.01
-GBPCHF 27.5k 88% TP50 SL -300 http://trade.raitis.co.uk/2/345/0/57/sell/GBPCHF/0.1               2354.31, 1666.95, 2541.46
-GBPJPY 30k   89% TP64 SL -350 http://trade.raitis.co.uk/2/59300/0/10800/sell/GBPJPY/0.1 -198.65, 2928.04, 2499.34, 3310.86
-GBPCAD 30k   86% TP50 SL -200 http://trade.raitis.co.uk/2/312/0/78/sell/GBPCAD/0.1   	-206.14, 3308.58, 3157.95, 3568.03
+GBPUSD 35k   89% TP68 SL -400 http://trade.raitis.co.uk/2/465/0/80/sell/GBPUSD/0.1               4865.85, 3078.98, 3408.01 1
+GBPCHF 27.5k 88% TP50 SL -300 http://trade.raitis.co.uk/2/345/0/57/sell/GBPCHF/0.1               2354.31, 1666.95, 2541.46 2
+GBPJPY 30k   89% TP64 SL -350 http://trade.raitis.co.uk/2/593/0/108/sell/GBPJPY/0.1     -198.65, 2928.04, 2499.34, 3310.86 3
+GBPCAD 30k   86% TP50 SL -200 http://trade.raitis.co.uk/2/312/0/78/sell/GBPCAD/0.1   	-206.14, 3308.58, 3157.95, 3568.03 4
 
 CHFJPY 16.7k 88% TP34 SL -400 http://trade.raitis.co.uk/2/678/0/58/sell/CHFJPY/0.1    	-182.91, 872.11,  1073.28, 1517.40
 NZDJPY 17.5k 87% TP30 SL -200 http://trade.raitis.co.uk/2/339/0/51/sell/NZDJPY/0.1      -187.19, 1390.97, 1730.33, 1598.37
@@ -106,22 +106,57 @@ curl -X POST http://trade.raitis.co.uk/2/115/0/30/sell/EURCHF/0.1
 curl -X POST http://trade.raitis.co.uk/2/300/0/40/sell/EURGBP/0.1   	
 curl -X POST http://trade.raitis.co.uk/2/424/0/58/sell/EURJPY/0.1    
 curl -X POST http://trade.raitis.co.uk/2/344/0/60/sell/EURCAD/0.1     
-curl -X POST http://trade.raitis.co.uk/2/27/0/4/sell/EURNOK/0.1        
+curl -X POST http://trade.raitis.co.uk/2/2700/0/400/sell/EURNOK/0.1        
 curl -X POST http://trade.raitis.co.uk/2/6000/0/1000/sell/EURZAR/0.1   
 curl -X POST http://trade.raitis.co.uk/2/465/0/80/sell/GBPUSD/0.1             
 curl -X POST http://trade.raitis.co.uk/2/345/0/57/sell/GBPCHF/0.1              
-curl -X POST http://trade.raitis.co.uk/2/59300/0/10800/sell/GBPJPY/0.1 
+curl -X POST http://trade.raitis.co.uk/2/593/0/108/sell/GBPJPY/0.1 
 curl -X POST http://trade.raitis.co.uk/2/312/0/78/sell/GBPCAD/0.1   
 curl -X POST http://trade.raitis.co.uk/2/678/0/58/sell/CHFJPY/0.1    	
 curl -X POST http://trade.raitis.co.uk/2/339/0/51/sell/NZDJPY/0.1     
 curl -X POST http://trade.raitis.co.uk/2/299/0/53/sell/CADCHF/0.1    
 curl -X POST http://trade.raitis.co.uk/2/256/0/53/sell/AUDUSD/0.1    
 
+1H Test
+GBPUSD
+curl -X POST http://trade.raitis.co.uk/6/233/0/12.79/sell/GBPUSD/0.1  
+TP: 11	SL: -200 18/24 75% 10.6k 2020.27, 8589.44
+-171.88,232.52,-33.80,-173.94,5.42,-398.80,-78.34,504.88,465.46,505.49,723.70,439.56,608.00,396.33,818.88,668.01,1008.52,834.93,908.48,810.90,925.78,1259.89,349.71,0.00
+-398.80,-173.94,-171.88,-78.34,-33.80,0.00,5.42,232.52,349.71,396.33,439.56,465.46,504.88,505.49,608.00,668.01,723.70,810.90,818.88,834.93,908.48,925.78,1008.52,1259.89
+January: -200 / -171.88
+February: 270 / 232.52
+March: -39 / -33.80
+April: -202 / -173.94
+May: 6 / 5.42
+June: -464 / -398.80
+July: -91 / -78.34
+August: 587 / 504.88
+September: 541 / 465.46
+October: 588 / 505.49
+November: 842 / 723.70
+December: 511 / 439.56
+January: 707 / 608.00
+February: 461 / 396.33
+March: 952 / 818.88
+April: 777 / 668.01
+May: 1173 / 1008.52
+June: 971 / 834.93
+July: 1056 / 908.48
+August: 943 / 810.90
+September: 1076 / 925.78
+October: 1465 / 1259.89
+November: 407 / 349.71
+December: 0 / 0.00
+
+4H Test
+GBPUSD 24.1 21 1.217 90% TP23(26.7) SL -260(302) http://trade.raitis.co.uk/9/302/0/26.7/sell/GBPUSD/0.1 -320.02, 134.24, 4050.03, 4310.81, 5304.60, 4136.95, 6237.07
+curl -X POST http://trade.raitis.co.uk/9/302/0/26.7/sell/GBPUSD/0.1
+
 DROPPED OUT
 GBPZAR 39 E 20 5.2K 
 
 MA
--GBPJPY 11K TP300 SL-50 49
+-GBPJPY 11K TP300 SL-50 49c
 -GBPUSD 4.5K TP50 sl-350 4
 
 GBPCHF 2.7K TP0 SL-250 small k
