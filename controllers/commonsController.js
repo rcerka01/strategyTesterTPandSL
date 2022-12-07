@@ -100,6 +100,15 @@ function getProfits2(arr, ci, tp, sl, currency) {
     var onePipValueInGbp = getOnePipValueGbp(currency)
     var profitFix = 0
 
+    // deduct spread
+    if (conf.single.deductSpread)  {
+        var spreadToDeductInGbp = conf.single.spread
+        var spreadToDeductInPip = conf.single.spread / onePipValueInGbp * currency.pip
+    } else { 
+        var spreadToDeductInGbp = 0
+        var spreadToDeductInPip = 0
+    }
+
     arr.forEach( (val, i) => {
         var profit =  0
 
@@ -115,12 +124,12 @@ function getProfits2(arr, ci, tp, sl, currency) {
                 { profitFix = val.profits[ci] }
 
         // sl
-        if (conf.sl && !closeFlag && val.maxLoses[ci] <= slInPips) { closeFlag = true; profit = slInPips; profitFix = 0  } 
+        if (conf.sl && !closeFlag && val.maxLoses[ci] <= slInPips) { closeFlag = true; profit = slInPips - spreadToDeductInPip; profitFix = 0  } 
         // tp
-        if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips; profitFix = 0 } 
-        if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips; profitFix = 0 }
+        if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips - spreadToDeductInPip; profitFix = 0 } 
+        if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips - spreadToDeductInPip; profitFix = 0 }
         // norm
-        if      (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && (!closeFlag || !midCloseFlag)) { profit = val.profits[ci] + profitFix; profitFix = 0 }
+        if      (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && (!closeFlag || !midCloseFlag)) { profit = val.profits[ci] + profitFix - spreadToDeductInPip; profitFix = 0 }
         else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci])               { closeFlag = false; }
 
         if (val.signals[ci] !== null && val.signals[ci] !== void 0 && val.signals[ci].length > 0) { midCloseFlag = false; }

@@ -7,7 +7,7 @@ const toGBP = {
     CZK: 0.035,
     MXN: 0.043,
     RON: 0.18,
-    USD: 0.86,
+    USD: 0.82,
     AUD: 0.56,
     CAD: 0.64,
     NZD: 0.5,
