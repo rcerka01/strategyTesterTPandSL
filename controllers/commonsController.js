@@ -97,7 +97,8 @@ function getProfits2(arr, ci, tp, sl, currency) {
 
     var closeFlag = false
     var midCloseFlag = true
-    var onePipValueInGbp = getOnePipValueGbp(currency) 
+    var onePipValueInGbp = getOnePipValueGbp(currency)
+    var profitFix = 0
 
     arr.forEach( (val, i) => {
         var profit =  0
@@ -105,14 +106,22 @@ function getProfits2(arr, ci, tp, sl, currency) {
         var tpInPips = tp / onePipValueInGbp * currency.pip
         var slInPips = sl / onePipValueInGbp * currency.pip
 
+        // fix to add to profit if same direction signal appear
+        if (arr[i + 1] !== void 0 && 
+            val.directions[ci] == arr[i + 1].directions[ci] && 
+            val.directions[ci] == val.signals[ci] &&
+            closeFlag &&
+            !midCloseFlag) 
+                { profitFix = val.profits[ci] }
+
         // sl
-        if (conf.sl && !closeFlag && val.maxLoses[ci] <= slInPips) { closeFlag = true; profit = slInPips } 
+        if (conf.sl && !closeFlag && val.maxLoses[ci] <= slInPips) { closeFlag = true; profit = slInPips; profitFix = 0  } 
         // tp
-        if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips; } 
-        if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips }
+        if (conf.tp && !midCloseFlag && val.maxProfits[ci] >= tpInPips) { midCloseFlag = true; profit = tpInPips; profitFix = 0 } 
+        if (conf.tp && !closeFlag && val.maxProfits[ci] >= tpInPips) { closeFlag = true; profit = tpInPips; profitFix = 0 }
         // norm
-        if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && !closeFlag) { profit = val.profits[ci] }
-        else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci]) { closeFlag = false; }
+        if      (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci] && (!closeFlag || !midCloseFlag)) { profit = val.profits[ci] + profitFix; profitFix = 0 }
+        else if (arr[i + 1] !== void 0 && val.directions[ci] != arr[i + 1].directions[ci])               { closeFlag = false; }
 
         if (val.signals[ci] !== null && val.signals[ci] !== void 0 && val.signals[ci].length > 0) { midCloseFlag = false; }
 
@@ -126,7 +135,8 @@ function getProfits2(arr, ci, tp, sl, currency) {
                 profit: profit, 
                 direction: val.directions[ci],
                 signal: val.signals[ci], 
-                close: closeFlag
+                close: closeFlag,
+                midClose: midCloseFlag
             })
         
     });  

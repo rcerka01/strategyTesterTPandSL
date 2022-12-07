@@ -6,11 +6,14 @@ const conf = require("../config/config");
 /* OUTPUT */
 
 function outputProfits(arr, currency) {
-    var output = "<table><tr><th></th><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Min PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Min GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th>" +
+    var output = "<table><tr><th></th><th></th><th></th><th>Daily PIPs</th><th>Max PIPs</th><th>Min PIPs</th><th>Daily GBP</th><th>Max GBP</th><th>Min GBP</th><th>Profit PIPs</th><th>Profit GBP</th><th>close</th><th> mid close</th>" +
         "<th>Signal</th></tr>"
     arr.forEach( (element, i) => {
         if (!element.close) var color = element.direction 
-        else var color= "black"
+        else var color = "black"
+
+        if (!element.midClose) var midColor = element.direction 
+        else var midColor = "black"
 
         var onePip = com.getOnePipValueGbp(currency)
 
@@ -39,6 +42,7 @@ function outputProfits(arr, currency) {
         "<td>" + profitInPips.toFixed()  + "</td>" +
         "<td>" + profitInGBP.toFixed(2)  + "</td>" +
         "<td><span style='color:" + color + ";'>" + element.close + "</td>" +
+        "<td><span style='color:" + midColor + ";'>" + element.midClose + "</td>" +
         "<td>" + element.signal + "</td>" +
         "</tr>" 
     })

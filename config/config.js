@@ -6,14 +6,14 @@ module.exports = {
     },
 
     year: {
-        from: 2012,
+        from: 2022,
         to: 2022
     },
 
     closingHour: 22,
 
     // 1D 4H 1H
-    timeGap: "1D",
+    timeGap: "1H",
 
     mapper: currencies.mapper,
 
@@ -27,7 +27,7 @@ module.exports = {
     // 3 - read intermediate file
     read: {
         switch: 3,
-        everyDayCurrency: 49
+        everyDayCurrency: 4
     },
 
     // From data.json
@@ -36,9 +36,9 @@ module.exports = {
     // 3 - single TP and SL and every day output, ordinary tp and sl (takeProfits2())
     // 4 - multiple TP and SL combinations, ordinary tp and sl (takeProfits2())
     single: {
-        switch: 4,
+        switch: 3,
 
-        currencyId: 1,
+        currencyId: 4,
 
         tpSlInGBP: true,
 
@@ -46,8 +46,8 @@ module.exports = {
         // in GBP
         spread: 5,
 
-        singleTp: 23,
-        singleSl: 0,
+        singleTp: 11,
+        singleSl: -200,
 
         // multipleTP: {
         //     start: 0,
@@ -75,7 +75,7 @@ module.exports = {
     // 1 - single tp
     // 2 - multiple tp
     combined: {
-        switch: 2,
+        switch: 1,
 
         tp: 100,
         sl: -100,

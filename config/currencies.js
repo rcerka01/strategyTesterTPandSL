@@ -32,7 +32,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: toGBP.USD,
             pipToGBP: toGBP.CHF,
-            enabled: true
+            enabled: false
         },
         { //2
             id: 2,
@@ -65,7 +65,7 @@ module.exports = {
             value: 0.1,
             marginToGBP: 1,
             pipToGBP: toGBP.USD,
-            enabled: false
+            enabled: true
         },
         { //5
             id: 5,
