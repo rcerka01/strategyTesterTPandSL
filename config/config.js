@@ -36,13 +36,13 @@ module.exports = {
     // 3 - single TP and SL and every day output, ordinary tp and sl (takeProfits2())
     // 4 - multiple TP and SL combinations, ordinary tp and sl (takeProfits2())
     single: {
-        switch: 4,
+        switch: 3,
 
         currencyId: 4,
 
         tpSlInGBP: true,
 
-        deductSpread: true,
+        deductSpread: false,
         // in GBP
         spread: 1.2,
 
